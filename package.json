@@ -1,0 +1,27 @@
+{
+  "name": "cli-keymapper",
+  "version": "0.0.0",
+  "description": "CLI for creating key mappings for keyboard firmware",
+  "main": "keymapper.js",
+  "dependencies": {
+    "blessed": "~0.0.29"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CJNE/cli-keymapper.git"
+  },
+  "keywords": [
+    "ergodox",
+    "keyboard",
+    "keymapping"
+  ],
+  "author": "Johan Isacsson",
+  "license": "Apache version 2",
+  "bugs": {
+    "url": "https://github.com/CJNE/cli-keymapper/issues"
+  }
+}
