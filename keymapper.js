@@ -126,6 +126,16 @@ screen.append(form);
 screen.append(infoBox);
 form.focus();
 
+screen.key('-', function(ch, key) {
+  if(state.layer > -1) state.layer--;
+  info("Layer "+state.layer);
+  redraw();
+});
+screen.key('+', function(ch, key) {
+  if(state.layer < 72) state.layer++;
+  info("Layer "+state.layer);
+  redraw();
+});
 // If box is focused, handle `enter`/`return` and give us some more content.
 screen.key('1', function(ch, key) {
   requestKey();
