@@ -3,6 +3,7 @@ var keyboard = require('./keyboards/ergodox');
 var screen = blessed.screen();
 var key = require('./lib/key');
 var state = require('./lib/state')
+var firmware = require('./firmwares/tmk.js');
 
 var form = blessed.form({
   top: '72%',
@@ -54,6 +55,33 @@ for(i = 0; i < keyboard.getNumberOfKeys(); i++) {
   keyboard.addKey(keyInstance);
 }
 
+function requestFile(clb) {
+  var fm = blessed.filemanager({
+    keys: true,
+    vi: true,
+    style: {
+      fg: 'white',
+      bg: 'red'
+    }
+  });
+
+  form.append(fm);
+  fm.up();
+  fm.pick('./', function(error, file) {
+    firmware.load(file, function(error, def) {
+      form.remove(fm);
+      var i,j;
+      for(i = 0; i < def.maps.length; i++) {
+        for(j = 0; j < keyboard.getNumberOfKeys(); j++) 
+          keys[j].setMapping(i, def.maps[i][j]);
+      }
+      info("Loaded "+def.maps.length+" maps");
+      redraw();
+    });
+
+  });
+}
+
 function requestKey() {
   if(inputSelectKey !== null) {
     form.remove(inputSelectKey);
@@ -99,8 +127,12 @@ screen.append(infoBox);
 form.focus();
 
 // If box is focused, handle `enter`/`return` and give us some more content.
-screen.key('k', function(ch, key) {
+screen.key('1', function(ch, key) {
   requestKey();
+});
+screen.key('2', function(ch, key) {
+  var file = requestFile();
+  if(file) firmware.parse(file, keyboard);
 });
 function redraw() {
   for(i = 0; i < 76; i++) {
