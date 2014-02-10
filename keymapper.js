@@ -4,6 +4,7 @@ var screen = blessed.screen();
 var key = require('./lib/key');
 var state = require('./lib/state')
 var firmware = require('./firmwares/tmk.js');
+var info = require('./lib/ui/info.js');
 
 var form = blessed.form({
   top: '72%',
@@ -19,25 +20,13 @@ var form = blessed.form({
   },
   keys: 'vi'
 });
-var infoBox = blessed.box({
-  top: '72%',
-  left: '80%',
-  width: '20%',
-  style: {
-    fg: 'red',
-    bg: 'black',
-    border: {
-      fg: '#f0f0f0'
-    }
+function eventListener(msg) {
+  switch(msg) {
+    case "redraw": screen.render(); break;
   }
-});
-
-function info(msg) {
-  //infoBox.shiftLine(1);
-  infoBox.pushLine(msg);
-  screen.render();
 }
-
+info.initLayout(screen);
+info.addListener(eventListener);
 keyboard.initLayout(screen);
 
 
@@ -75,7 +64,7 @@ function requestFile(clb) {
         for(j = 0; j < keyboard.getNumberOfKeys(); j++) 
           keys[j].setMapping(i, def.maps[i][j]);
       }
-      info("Loaded "+def.maps.length+" maps");
+      info.print("Loaded "+def.maps.length+" maps");
       redraw();
     });
 
@@ -92,7 +81,7 @@ function requestKey() {
     return;
   }
   state.selecting = true;
-  info("Select key: ");
+  info.print("Select key: ");
   // Select key input
   inputSelectKey = blessed.textbox({
     content: "Input key number, or click a key: ",
@@ -115,7 +104,7 @@ function requestKey() {
   form.append(inputSelectKey);
   inputSelectKey.focus();
   inputSelectKey.readInput(function(ch,text) {
-    info("Got "+text);
+    info.print("Got "+text);
     var selectedKey = parseInt(text);
     if(selectedKey >= 0) keys[selectedKey].select(true);
     requestKey();
@@ -123,17 +112,16 @@ function requestKey() {
 }
 // Append our box to the screen.
 screen.append(form);
-screen.append(infoBox);
 form.focus();
 
 screen.key('-', function(ch, key) {
-  if(state.layer > -1) state.layer--;
-  info("Layer "+state.layer);
+  if(state.layer > 0) state.layer--;
+  info.print("Layer "+state.layer);
   redraw();
 });
 screen.key('+', function(ch, key) {
   if(state.layer < 72) state.layer++;
-  info("Layer "+state.layer);
+  info.print("Layer "+state.layer);
   redraw();
 });
 // If box is focused, handle `enter`/`return` and give us some more content.

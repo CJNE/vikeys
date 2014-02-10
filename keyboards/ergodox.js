@@ -54,7 +54,7 @@ exports.getPos = function(key) {
   } 
   return { 'x': x, 'y': y, 'w': w, 'h': h };
 }
-exports.initLayout = function(screen) {
+exports.initLayout = function(container) {
   left = blessed.box({
     top: '0',
     left: '0',
@@ -88,6 +88,6 @@ exports.initLayout = function(screen) {
       },
     }
   });
-  screen.append(left);
-  screen.append(right);
+  container.append(left);
+  container.append(right);
 }
