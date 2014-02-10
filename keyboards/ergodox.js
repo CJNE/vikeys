@@ -59,7 +59,7 @@ exports.initLayout = function(container) {
     top: '0',
     left: '0',
     width: '50%',
-    height: '70%',
+    height: '100%',
     tags: true,
     border: {
       type: 'line'
@@ -76,7 +76,7 @@ exports.initLayout = function(container) {
     top: '0',
     left: '50%',
     width: '50%',
-    height: '70%',
+    height: '100%',
     border: {
       type: 'line'
     },
