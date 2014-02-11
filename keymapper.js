@@ -5,6 +5,7 @@ var key = require('./lib/key');
 var state = require('./lib/state')
 var firmware = require('./firmwares/tmk.js');
 var info = require('./lib/ui/info.js');
+var menuAssign = require('./lib/ui/assignmenu.js');
 
 var ui = blessed.box({
   top: '50%',
@@ -57,7 +58,6 @@ var pos;
 var keyInstance;
 var selectedLayer = 0;
 var inputSelectKey = null;
-var selectedKey = -1;
 for(i = 0; i < keyboard.getNumberOfKeys(); i++) {
   keyInstance = new key.Instance(i);
   keys.push(keyInstance);
@@ -142,6 +142,9 @@ screen.key('+', function(ch, key) {
   redraw();
 });
 // If box is focused, handle `enter`/`return` and give us some more content.
+screen.key('3', function(ch, key) {
+  menuAssign.show(ui, screen);
+});
 screen.key('2', function(ch, key) {
   requestKey();
 });
