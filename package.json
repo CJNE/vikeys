@@ -4,7 +4,8 @@
   "description": "CLI for creating key mappings for keyboard firmware",
   "main": "keymapper.js",
   "dependencies": {
-    "blessed": "~0.0.29"
+    "blessed": "~0.0.29",
+    "lodash": "~2.4.1"
   },
   "devDependencies": {},
   "scripts": {
