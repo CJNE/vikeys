@@ -143,7 +143,11 @@ screen.key('+', function(ch, key) {
 });
 // If box is focused, handle `enter`/`return` and give us some more content.
 screen.key('3', function(ch, key) {
-  menuAssign.show(ui, screen);
+  menuAssign.show(ui, function(code) {
+    keys.forEach(function(key) {
+      if(key.isSelected()) key.setMapping(state.layer, code);
+    });
+  });
 });
 screen.key('2', function(ch, key) {
   requestKey();
