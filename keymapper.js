@@ -27,15 +27,82 @@ var keyboardBox = blessed.box({
   width: '100%',
   height: '50%'
 });
-var mainMenu = blessed.box({
+var mainMenu = blessed.listbar({
   width: '100%',
   bottom: 0,
   height: 1,
-  content: ' 1:load 2:select 3:assign',
+  keys: true,
+  vi: true,
+  autoCommandKeys: true,
   style: {
     fg: 'white',
-    bg: 'blue'
+    bg: 'blue',
+    selected: {
+      prefix: 'white',
+      fg: 'red',
+      bg: 'blue'
+    },
+    item: {
+      prefix: 'white',
+      fg: 'white',
+      bg: 'blue'
+    }
   }
+});
+function menuHome() {
+  mainMenu.setItems({
+    'load': {  
+      prefix: '1',
+      keys: ['1'],
+      callback: function() {
+        var fm = blessed.filemanager({
+          keys: true,
+          vi: true,
+          style: {
+            fg: 'white',
+            bg: 'red'
+          }
+        });
+        ui.append(fm);
+        fm.up();
+        fm.pick('./', function(error, file) {
+          firmware.load(file, function(error, def) {
+            ui.remove(fm);
+            var i,j;
+            for(i = 0; i < def.maps.length; i++) {
+              for(j = 0; j < keyboard.getNumberOfKeys(); j++) 
+                keys[j].setMapping(i, def.maps[i][j]);
+            }
+            redraw();
+            info.print("Loaded "+def.maps.length+" maps");
+            mainMenu.focus();
+          });
+
+        });
+      }
+    },
+    'select': {
+      prefix: '2',
+      keys: ['2'],
+      callback: function() {
+        requestKey();
+      }
+    },
+    'assign': {
+      prefix: '3',
+      keys: ['3'],
+      callback: function() {
+        menuAssign.show(ui, function(code) {
+          keys.forEach(function(key) {
+            if(key.isSelected()) key.setMapping(state.layer, code);
+          });
+        });
+      }
+    }
+  });
+}
+mainMenu.on('select', function(ch, item) {
+  info.print("Selected "+item);
 });
 function eventListener(msg) {
   switch(msg) {
@@ -49,7 +116,8 @@ screen.append(keyboardBox);
 info.initLayout(ui);
 info.addListener(eventListener);
 keyboard.initLayout(keyboardBox);
-
+menuHome();
+mainMenu.focus();
 
 var i = 0;
 var keys = [];
@@ -64,32 +132,6 @@ for(i = 0; i < keyboard.getNumberOfKeys(); i++) {
   keyboard.addKey(keyInstance);
 }
 
-function requestFile(clb) {
-  var fm = blessed.filemanager({
-    keys: true,
-    vi: true,
-    style: {
-      fg: 'white',
-      bg: 'red'
-    }
-  });
-
-  ui.append(fm);
-  fm.up();
-  fm.pick('./', function(error, file) {
-    firmware.load(file, function(error, def) {
-      ui.remove(fm);
-      var i,j;
-      for(i = 0; i < def.maps.length; i++) {
-        for(j = 0; j < keyboard.getNumberOfKeys(); j++) 
-          keys[j].setMapping(i, def.maps[i][j]);
-      }
-      info.print("Loaded "+def.maps.length+" maps");
-      redraw();
-    });
-
-  });
-}
 
 function requestKey() {
   if(inputSelectKey !== null) {
@@ -140,21 +182,6 @@ screen.key('+', function(ch, key) {
   if(state.layer < 72) state.layer++;
   info.print("Layer "+state.layer);
   redraw();
-});
-// If box is focused, handle `enter`/`return` and give us some more content.
-screen.key('3', function(ch, key) {
-  menuAssign.show(ui, function(code) {
-    keys.forEach(function(key) {
-      if(key.isSelected()) key.setMapping(state.layer, code);
-    });
-  });
-});
-screen.key('2', function(ch, key) {
-  requestKey();
-});
-screen.key('1', function(ch, key) {
-  var file = requestFile();
-  if(file) firmware.parse(file, keyboard);
 });
 function redraw() {
   for(i = 0; i < 76; i++) {
