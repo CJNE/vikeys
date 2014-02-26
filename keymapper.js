@@ -1,4 +1,5 @@
 var blessed = require('blessed');
+var widgets = require('./lib/ui/widgets.js');
 var keyboard = require('./keyboards/ergodox');
 var screen = blessed.screen();
 var key = require('./lib/key');
@@ -9,8 +10,8 @@ var menuAssign = require('./lib/ui/assignmenu.js');
 
 var ui = blessed.box({
   top: '50%',
-  left: '0%',
-  width: '100%',
+  left: '20%',
+  width: '80%',
   height: '50%',
   style: {
     fg: 'white',
@@ -27,10 +28,10 @@ var keyboardBox = blessed.box({
   width: '100%',
   height: '50%'
 });
-var mainMenu = blessed.listbar({
-  width: '100%',
-  bottom: 0,
-  height: 1,
+var mainMenu = widgets.listmenu({
+  width: '20%',
+  top: '50%',
+  height: '50%',
   keys: true,
   vi: true,
   autoCommandKeys: true,
@@ -92,10 +93,24 @@ function menuHome() {
       prefix: '3',
       keys: ['3'],
       callback: function() {
-        menuAssign.show(ui, function(code) {
-          keys.forEach(function(key) {
-            if(key.isSelected()) key.setMapping(state.layer, code);
-          });
+        menuAssign.show(ui, {
+          assign: function(code) {
+            keys.forEach(function(key) {
+              if(key.isSelected()) {
+                key.setMapping(state.layer, code);
+                key.select(false);
+              }
+            });
+            //screen.grabKeys = false;
+            //screen.render();
+            //mainMenu.focus();
+          },
+          cancel: function() {
+            ui.remove(menuAssign);
+            screen.grabKeys = false;
+            screen.render();
+            mainMenu.focus();
+          }
         });
       }
     }
@@ -110,14 +125,15 @@ function eventListener(msg) {
   }
 }
 // Append our box to the screen.
-screen.append(mainMenu);
 screen.append(ui);
 screen.append(keyboardBox);
+screen.append(mainMenu);
 info.initLayout(ui);
 info.addListener(eventListener);
 keyboard.initLayout(keyboardBox);
 menuHome();
 mainMenu.focus();
+state.focus = mainMenu;
 
 var i = 0;
 var keys = [];

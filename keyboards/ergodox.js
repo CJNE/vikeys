@@ -70,13 +70,17 @@ exports.initLayout = function(container) {
       border: {
         fg: '#f0f0f0'
       },
-    }
+    },
+    keys: true,
+    vi: true
   });
   right = blessed.box({
     top: '0',
     left: '50%',
     width: '50%',
     height: '100%',
+    keys: true,
+    vi: true,
     border: {
       type: 'line'
     },
