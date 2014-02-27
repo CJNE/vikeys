@@ -1,17 +1,17 @@
 var blessed = require('blessed');
 var widgets = require('./lib/ui/widgets.js');
 var keyboard = require('./keyboards/ergodox');
-var screen = blessed.screen();
 var key = require('./lib/key');
 var state = require('./lib/state')
+var screen = state.screen;
 var firmware = require('./firmwares/tmk.js');
 var info = require('./lib/ui/info.js');
 var menuAssign = require('./lib/ui/assignmenu.js');
 
 var ui = blessed.box({
   top: '50%',
-  left: '20%',
-  width: '80%',
+  left: '10%',
+  width: '90%',
   height: '50%',
   style: {
     fg: 'white',
@@ -29,19 +29,21 @@ var keyboardBox = blessed.box({
   height: '50%'
 });
 var mainMenu = widgets.listmenu({
-  width: '20%',
+  width: '10%',
+  left: 0,
   top: '50%',
   height: '50%',
   keys: true,
+  mouse: true,
   vi: true,
-  autoCommandKeys: true,
+  name: "Main menu",
   style: {
     fg: 'white',
     bg: 'blue',
     selected: {
       prefix: 'white',
-      fg: 'red',
-      bg: 'blue'
+      fg: 'blue',
+      bg: 'white'
     },
     item: {
       prefix: 'white',
@@ -53,8 +55,8 @@ var mainMenu = widgets.listmenu({
 function menuHome() {
   mainMenu.setItems({
     'load': {  
-      prefix: '1',
-      keys: ['1'],
+      //prefix: '1',
+      //keys: ['1'],
       callback: function() {
         var fm = blessed.filemanager({
           keys: true,
@@ -83,16 +85,17 @@ function menuHome() {
       }
     },
     'select': {
-      prefix: '2',
-      keys: ['2'],
+      //prefix: '2',
+      //keys: ['2'],
       callback: function() {
         requestKey();
       }
     },
     'assign': {
-      prefix: '3',
-      keys: ['3'],
+      //prefix: '3',
+      //keys: ['3'],
       callback: function() {
+        screen.grabKeys = true;
         menuAssign.show(ui, {
           assign: function(code) {
             keys.forEach(function(key) {
@@ -106,34 +109,28 @@ function menuHome() {
             //mainMenu.focus();
           },
           cancel: function() {
-            ui.remove(menuAssign);
             screen.grabKeys = false;
-            screen.render();
-            mainMenu.focus();
           }
         });
       }
     }
   });
 }
-mainMenu.on('select', function(ch, item) {
-  info.print("Selected "+item);
-});
 function eventListener(msg) {
   switch(msg) {
     case "redraw": screen.render(); break;
   }
 }
 // Append our box to the screen.
-screen.append(ui);
 screen.append(keyboardBox);
 screen.append(mainMenu);
+screen.append(ui);
 info.initLayout(ui);
 info.addListener(eventListener);
 keyboard.initLayout(keyboardBox);
 menuHome();
-mainMenu.focus();
-state.focus = mainMenu;
+state.pushFocus(mainMenu);
+//state.focus = mainMenu;
 
 var i = 0;
 var keys = [];
