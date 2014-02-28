@@ -11,7 +11,8 @@ var menuAssign = require('./lib/ui/assignmenu.js');
 var ui = blessed.box({
   top: '50%',
   left: '10%',
-  width: '90%',
+  right: 0,
+  //width: '90%',
   height: '50%',
   style: {
     fg: 'white',
@@ -21,6 +22,22 @@ var ui = blessed.box({
     }
   },
   keys: 'vi'
+});
+var statusBar = blessed.box({
+  bottom: 0,
+  left: 0,
+  right: 0,
+  width: '100%',
+  height: 1,
+  tags: true,
+  style: {
+    bg: 'lightyellow',
+    fg: 'white',
+    border: {
+      bg: 'lightyellow',
+      fg: 'purple'
+    }
+  }
 });
 var keyboardBox = blessed.box({
   top: '0%',
@@ -54,7 +71,7 @@ var mainMenu = widgets.listmenu({
 });
 function menuHome() {
   mainMenu.setItems({
-    'load': {  
+    ' Load': {  
       //prefix: '1',
       //keys: ['1'],
       callback: function() {
@@ -84,14 +101,14 @@ function menuHome() {
         });
       }
     },
-    'select': {
+    ' Select': {
       //prefix: '2',
       //keys: ['2'],
       callback: function() {
         requestKey();
       }
     },
-    'assign': {
+    ' Assign': {
       //prefix: '3',
       //keys: ['3'],
       callback: function() {
@@ -125,6 +142,7 @@ function eventListener(msg) {
 screen.append(keyboardBox);
 screen.append(mainMenu);
 screen.append(ui);
+screen.append(statusBar);
 info.initLayout(ui);
 info.addListener(eventListener);
 keyboard.initLayout(keyboardBox);
@@ -200,7 +218,9 @@ function redraw() {
   for(i = 0; i < 76; i++) {
     keys[i].draw();
   }
+  statusBar.setContent(state.getStatusLine());
   screen.render();
+
 }
 
 
