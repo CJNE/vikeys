@@ -1,6 +1,7 @@
 var blessed = require('blessed');
 var widgets = require('./lib/ui/widgets.js');
-var keyboard = require('./keyboards/ergodox');
+var keyboard = require('./lib/keyboard');
+var keyboards = require('./lib/keyboards');
 var key = require('./lib/key');
 var state = require('./lib/state')
 var screen = state.screen;
@@ -52,6 +53,7 @@ var mainMenu = widgets.listmenu({
   height: '50%',
   keys: true,
   mouse: true,
+  keyListener: state.keyListener,
   vi: true,
   name: "Main menu",
   style: {
@@ -145,23 +147,24 @@ screen.append(ui);
 screen.append(statusBar);
 info.initLayout(ui);
 info.addListener(eventListener);
-keyboard.initLayout(keyboardBox);
+state.on('keyboard', keyboard.eventListener);
+state.keyboard = keyboards.keyboards['ergodox'];
+
 menuHome();
 state.pushFocus(mainMenu);
 //state.focus = mainMenu;
 
 var i = 0;
-var keys = [];
 var keybox;
 var pos;
 var keyInstance;
 var selectedLayer = 0;
 var inputSelectKey = null;
-for(i = 0; i < keyboard.getNumberOfKeys(); i++) {
+for(i = 0; i < state.keyboard.keys; i++) {
   keyInstance = new key.Instance(i);
-  keys.push(keyInstance);
-  keyboard.addKey(keyInstance);
+  state.keys.push(keyInstance);
 }
+keyboard.initLayout(keyboardBox, state.keyboard);
 
 
 function requestKey() {
@@ -204,30 +207,23 @@ function requestKey() {
   });
 }
 
-screen.key('-', function(ch, key) {
-  if(state.layer > 0) state.layer--;
-  info.print("Layer "+state.layer);
-  redraw();
-});
-screen.key('+', function(ch, key) {
-  if(state.layer < 72) state.layer++;
-  info.print("Layer "+state.layer);
-  redraw();
-});
 function redraw() {
   for(i = 0; i < 76; i++) {
-    keys[i].draw();
+    state.keys[i].draw();
   }
   statusBar.setContent(state.getStatusLine());
   screen.render();
 
 }
-
-
-// Quit on Escape, q, or Control-C.
-screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+state.on('redraw', redraw);
+screen.on('keypress', state.keyListener);
+mainMenu.on('cancel', function() {
   return process.exit(0);
 });
+// Quit on Escape, q, or Control-C.
+//screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+//  return process.exit(0);
+//});
 
 // Render the screen.
 screen.render();
