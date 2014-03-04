@@ -73,27 +73,62 @@ var mainMenu = widgets.listmenu({
 });
 function menuHome() {
   mainMenu.setItems({
+    ' Assign': {
+      callback: function() {
+        menuAssign.show(ui, {
+          assign: function(code) {
+            state.keys[state.currentKey].setMapping(state.layer, code);
+            state.keys.forEach(function(key) {
+              if(key.isSelected()) {
+                key.setMapping(state.layer, code);
+                key.select(false);
+              }
+            });
+          },
+          cancel: function() {
+          }
+        });
+      }
+    },
+    ' Build': {
+      callback: function() {
+      }
+    },
     ' Load': {  
-      //prefix: '1',
-      //keys: ['1'],
       callback: function() {
         var fm = blessed.filemanager({
           keys: true,
           vi: true,
           style: {
             fg: 'white',
-            bg: 'red'
+            bg: 'blue',
+            selected: {
+              prefix: 'white',
+              fg: 'blue',
+              bg: 'white'
+            },
+            item: {
+              prefix: 'white',
+              fg: 'white',
+              bg: 'blue'
+            }
           }
         });
         ui.append(fm);
-        fm.up();
+        fm.focus();
         fm.pick('./', function(error, file) {
+          if(error || file == "" || typeof(file) === 'undefined' || file == null) {
+            ui.remove(fm);
+            mainMenu.focus();
+            redraw();
+            return;
+          }
           firmware.load(file, function(error, def) {
             ui.remove(fm);
             var i,j;
             for(i = 0; i < def.maps.length; i++) {
-              for(j = 0; j < keyboard.getNumberOfKeys(); j++) 
-                keys[j].setMapping(i, def.maps[i][j]);
+              for(j = 0; j < state.keyboard.keys; j++) 
+                state.keys[j].setMapping(i, def.maps[i][j]);
             }
             redraw();
             info.print("Loaded "+def.maps.length+" maps");
@@ -102,35 +137,14 @@ function menuHome() {
 
         });
       }
-    },
-    ' Select': {
-      //prefix: '2',
-      //keys: ['2'],
+    }, 
+    ' Save': {
       callback: function() {
-        requestKey();
       }
     },
-    ' Assign': {
-      //prefix: '3',
-      //keys: ['3'],
+    ' Exit': {
       callback: function() {
-        screen.grabKeys = true;
-        menuAssign.show(ui, {
-          assign: function(code) {
-            keys.forEach(function(key) {
-              if(key.isSelected()) {
-                key.setMapping(state.layer, code);
-                key.select(false);
-              }
-            });
-            //screen.grabKeys = false;
-            //screen.render();
-            //mainMenu.focus();
-          },
-          cancel: function() {
-            screen.grabKeys = false;
-          }
-        });
+        process.exit(0);
       }
     }
   });
@@ -147,66 +161,20 @@ screen.append(ui);
 screen.append(statusBar);
 info.initLayout(ui);
 info.addListener(eventListener);
+screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
 state.keyboard = keyboards.keyboards['ergodox'];
 
 menuHome();
 state.pushFocus(mainMenu);
-//state.focus = mainMenu;
 
 var i = 0;
-var keybox;
-var pos;
 var keyInstance;
-var selectedLayer = 0;
-var inputSelectKey = null;
 for(i = 0; i < state.keyboard.keys; i++) {
   keyInstance = new key.Instance(i);
   state.keys.push(keyInstance);
 }
 keyboard.initLayout(keyboardBox, state.keyboard);
-
-
-function requestKey() {
-  if(inputSelectKey !== null) {
-    ui.remove(inputSelectKey);
-    isSelectingKey = false;
-    state.selecting = false;
-    inputSelectKey = null;
-    redraw();
-    return;
-  }
-  state.selecting = true;
-  info.print("Select key: ");
-  // Select key input
-  inputSelectKey = blessed.textbox({
-    label: "Input key number, or click a key: ",
-    width: '40%',
-    height: '20%',
-    style: {
-      fg: 'white',
-      bg: 'magenta',
-      border: {
-        fg: '#f0f0f0'
-      },
-    },
-    border: {
-      style: 'line'
-    },
-    top: '50%',
-    left: '50%'
-  });
-  ui.append(inputSelectKey);
-  redraw();
-  inputSelectKey.focus();
-  inputSelectKey.readInput(function(ch,text) {
-    info.print("Got "+text);
-    var selectedKey = parseInt(text);
-    if(selectedKey >= 0 && selectedKey < keyboard.getNumberOfKeys()) keys[selectedKey].select(true);
-    requestKey();
-  });
-}
-
 function redraw() {
   for(i = 0; i < 76; i++) {
     state.keys[i].draw();
@@ -217,14 +185,6 @@ function redraw() {
 }
 state.on('redraw', redraw);
 screen.on('keypress', state.keyListener);
-mainMenu.on('cancel', function() {
-  return process.exit(0);
-});
-// Quit on Escape, q, or Control-C.
-//screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-//  return process.exit(0);
-//});
-
-// Render the screen.
+statusBar.setContent(state.getStatusLine());
 screen.render();
 
