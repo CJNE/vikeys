@@ -8,6 +8,7 @@ var screen = state.screen;
 var firmware = require('./firmwares/tmk.js');
 var info = require('./lib/ui/info.js');
 var menuAssign = require('./lib/ui/assignmenu.js');
+var pc = require('path-complete');
 
 var ui = blessed.box({
   top: '50%',
@@ -140,6 +141,60 @@ function menuHome() {
     }, 
     ' Save': {
       callback: function() {
+        var saveName = widgets.filebox({
+          bottom: 0,
+          width: '100%',
+          height: 1,
+          value: process.cwd()+(process.platform === 'win32' ? '\\' : '/'),
+          style: {
+            bg: 'blue',
+            fg: 'white'
+          }
+        });
+        state.helpMessage = "Enter file name to write to";
+        statusBar.bottom = 1;
+        state.screen.append(saveName);
+        redraw();
+        //saveName.focus();
+        saveName.on('completion', function(matches) {
+          if(matches === null || matches.length == 1) {
+            state.statusExtra = '';
+            statusBar.height = 1;
+            state.statusExtra = ''; //matches.join(' ');
+          } else {
+            statusBar.height = 2;
+            state.statusExtra = matches.join(' ');
+          }
+          redraw();
+        });
+        saveName.readInput(function(err, path) {
+          if(path !== null) {
+            firmware.save(path, { keys: state.keys }, state.keyboard, function(err, msg) {
+              if(err) state.helpMessage = err;
+              else state.helpMessage = "Saved to "+path;
+              state.screen.remove(saveName);
+              statusBar.bottom = 0;
+              statusBar.height = 1;
+              redraw();
+            });
+          }
+          else {
+            state.screen.remove(saveName);
+            statusBar.bottom = 0;
+            statusBar.height = 1;
+            redraw();
+          }
+        });
+        
+        /*
+        saveName.readInput(function(err, val) {
+          state.screen.remove(saveName);
+          statusBar.bottom = 0;
+          if(val !== null) {
+            state.helpMessage = "Save to "+val;
+          }
+          redraw();
+        });*/
       }
     },
     ' Exit': {
@@ -180,7 +235,7 @@ function redraw() {
     state.keys[i].draw();
   }
   statusBar.setContent(state.getStatusLine());
-  screen.render();
+  state.screen.render();
 
 }
 state.on('redraw', redraw);

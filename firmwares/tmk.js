@@ -1,4 +1,5 @@
 var fs = require('fs')
+var MAX_LAYERS = 32;
 exports.load = function(path, clb) {
   fs.readFile(path, function (err, data) {
     if (err) clb(err);
@@ -24,6 +25,25 @@ exports.load = function(path, clb) {
     }
     clb(null, { maps: maps, actions: []});
   }); 
+};
+exports.save = function(path, data, keyboard, clb) {
+  var str = "static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {\n";
+  var layer, keysDef, i, mapping;
+  for(layer = 0; layer < MAX_LAYERS; layer++) {
+    keysDef = "  KEYMAP( // Layer "+layer+"\n";
+    for(i = 0; i < keyboard.keys; i++) {
+      mapping = data.keys[i].getMapping(layer);
+      if(typeof(mapping) === 'undefined') mapping = "NO";
+      keysDef += (i == 0 ? "    ":", ")+mapping;
+    }
+    str += keysDef;
+    str += (layer === (MAX_LAYERS - 1) ? ")" : "),\n");
+  }
+  str += "\n}";
+  fs.writeFile(path, str, function(err) {
+    if(err) return clb(err, "Failed to write file");
+    return clb(null, "Wrote file");
+  });
 };
 /*
 static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
