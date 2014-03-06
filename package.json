@@ -1,15 +1,30 @@
 {
-  "name": "cli-keymapper",
-  "version": "0.0.0",
-  "description": "CLI for creating key mappings for keyboard firmware",
-  "main": "keymapper.js",
+  "name": "vikeys",
+  "version": "0.0.1",
+  "description": "Terminal UI for creating and editing key mappings for keyboard firmwares",
+  "homepage": "https://github.com/CJNE/vikeys",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CJNE/vikeys.git"
+  },
+  "preferGlobal": true,
+  "directories": {
+    "doc": "./doc",
+    "lib": "./lib"
+  },
+  "bugs": {
+    "url": "https://github.com/CJNE/vikeys/issues",
+    "email": "johan@generatorhallen.se"
+  },
+  "bin": { "vikeys": "./vikeys.js" },
+  "main": "vikeys.js",
   "dependencies": {
     "blessed": "~0.0.29",
     "lodash": "~2.4.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -18,7 +33,8 @@
   "keywords": [
     "ergodox",
     "keyboard",
-    "keymapping"
+    "keymapping",
+    "curses"
   ],
   "author": "Johan Isacsson",
   "license": "Apache version 2",

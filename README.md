@@ -29,9 +29,10 @@ In order to have any use for this tool you need the firmware and the dependencie
 
 [Get build dependencies](https://github.com/tmk/tmk_keyboard/blob/master/doc/build.md)
 
-***This will be replaced by an easier method once this is a proper npm module***
-Finally, check out this repository with Git, cd to you local repository and type `npm install` to install dependencies.
-Edit the file `vikeys` and set the path to your local repository then copy it to a directory in your $PATH (/usr/local/bin for example).
+Finally, install vikeys: `npm install -g vikeys`
+
+***For development and tweaking***
+Instead of npm install, clone this repo and `ln -s /path/to/working/copy/vikeys.js /usr/local/bin/vikeys`
 
 Usage
 =====

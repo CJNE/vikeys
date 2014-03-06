@@ -1,14 +1,20 @@
+#!/usr/bin/env node
+var screenoptions = {};
+if(process.argv.length > 3) {
+  screenoptions.log = "/tmp/vikeys.log";
+  screenoptions.debug = true;
+}
 var blessed = require('blessed');
+var screen = blessed.screen(screenoptions);
 var widgets = require('./lib/ui/widgets.js');
 var keyboard = require('./lib/keyboard');
 var keyboards = require('./lib/keyboards');
 var key = require('./lib/key');
 var state = require('./lib/state')
-var screen = state.screen;
-var info = require('./lib/ui/info.js');
 var menuAssign = require('./lib/ui/assignmenu.js');
 var menuActions = require('./lib/ui/actionsmenu.js');
 
+state.setScreen(screen);
 state.keyboard = keyboards.keyboards['ergodox'];
 state.firmware = require('./firmwares/tmk.js');
 
@@ -153,7 +159,7 @@ function menuHome() {
         });
         state.helpMessage = "Enter file name to write to";
         statusBar.bottom = 1;
-        state.screen.append(saveName);
+        screen.append(saveName);
         redraw();
         //saveName.focus();
         saveName.on('completion', function(matches) {
@@ -172,29 +178,19 @@ function menuHome() {
             state.firmware.save(path, { keys: state.keys }, state.keyboard, function(err, msg) {
               if(err) state.helpMessage = err;
               else state.helpMessage = "Saved to "+path;
-              state.screen.remove(saveName);
+              screen.remove(saveName);
               statusBar.bottom = 0;
               statusBar.height = 1;
               redraw();
             });
           }
           else {
-            state.screen.remove(saveName);
+            screen.remove(saveName);
             statusBar.bottom = 0;
             statusBar.height = 1;
             redraw();
           }
         });
-        
-        /*
-        saveName.readInput(function(err, val) {
-          state.screen.remove(saveName);
-          statusBar.bottom = 0;
-          if(val !== null) {
-            state.helpMessage = "Save to "+val;
-          }
-          redraw();
-        });*/
       }
     },
     ' Exit': {
@@ -227,8 +223,6 @@ screen.append(keyboardBox);
 screen.append(mainMenu);
 screen.append(ui);
 screen.append(statusBar);
-info.initLayout(ui);
-info.addListener(eventListener);
 screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
 
@@ -247,7 +241,7 @@ function redraw() {
     state.keys[i].draw();
   }
   statusBar.setContent(state.getStatusLine());
-  state.screen.render();
+  screen.render();
 
 }
 state.on('redraw', redraw);
