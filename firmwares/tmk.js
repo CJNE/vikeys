@@ -1,19 +1,17 @@
 var fs = require('fs')
 var MAX_LAYERS = 32;
+exports.MAX_ACTIONS = 32;
 exports.load = function(path, clb) {
   fs.readFile(path, function (err, data) {
     if (err) clb(err);
     data = data.toString();
     //Remove comments
     data = data.replace(/(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm, '$1');
+
+    //Parse keymap definitions
     var defs = data.match(/\n\s*KEYMAP\s*\(([^]+?)\),?$/mgi); ///.*KEYMAP\((.*)\),/ig);
-    var i; 
-    var map;
-    var keys;
-    var maps = [];
+    var i, map, keys, maps = [];
     for(i=0; i < defs.length; i++) {
-      //console.log("Map #"+i);
-      //console.log(defs[i]);
       map = defs[i].trim();
       keys = map.match(/\s*\w+\s*,?/mg);
       keys = keys.map(function(key) {
@@ -23,7 +21,33 @@ exports.load = function(path, clb) {
       }).splice(1);
       maps.push(keys);
     }
-    clb(null, { maps: maps, actions: []});
+
+    //Parse action definitions
+    var re = /fn_actions\[\]\s*=\s*\{([^]+?)\};$/mgi;
+    var actiondef = re.exec(data);
+    var actiondefs  = actiondef[1].trim().match(/\s*ACTION.*\(.*\),?/mg);
+    var action, actions = [], j;
+    re = /(ACTION_.*)\((.*)\)/i;
+    for(i=0; i < actiondefs.length; i++) {
+      action = re.exec(actiondefs[i]);
+      //console.log(actiondefs[i]);
+      actions.push({ fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
+    }
+
+    /*
+static const uint16_t PROGMEM fn_actions[] = {
+    ACTION_FUNCTION(TEENSY_KEY),                    // FN0 - Teensy key
+    ACTION_LAYER_MOMENTARY(2),                      // FN1 - switch to Layer1 from layer 0
+    ACTION_LAYER_SET(1, ON_PRESS),                  // FN2 - push Layer2
+    ACTION_LAYER_SET(3, ON_PRESS),                  // FN3 - push Layer3
+    ACTION_LAYER_SET(0, ON_PRESS),                  // FN4 - push Layer0
+    ACTION_LAYER_MOMENTARY(1),                      // FN5 - switch to Layer1 from layer 1
+    ACTION_MODS_KEY(MOD_LSFT, KC_BSLS),             // FN6  = Shifted BackSlash // " in Workman
+    ACTION_MODS_KEY(MOD_LSFT, KC_LBRC),             // FN7  = Shifted BackSlash // " in Workman
+    ACTION_MODS_KEY(MOD_LSFT, KC_RBRC),             // FN8  = Shifted BackSlash // " in Workman
+};
+*/
+    clb(null, { maps: maps, actions: actions});
   }); 
 };
 exports.save = function(path, data, keyboard, clb) {

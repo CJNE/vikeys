@@ -5,10 +5,13 @@ var keyboards = require('./lib/keyboards');
 var key = require('./lib/key');
 var state = require('./lib/state')
 var screen = state.screen;
-var firmware = require('./firmwares/tmk.js');
 var info = require('./lib/ui/info.js');
 var menuAssign = require('./lib/ui/assignmenu.js');
+var menuActions = require('./lib/ui/actionsmenu.js');
 var pc = require('path-complete');
+
+state.keyboard = keyboards.keyboards['ergodox'];
+state.firmware = require('./firmwares/tmk.js');
 
 var ui = blessed.box({
   top: '50%',
@@ -91,6 +94,14 @@ function menuHome() {
         });
       }
     },
+    ' Actions': {
+      callback: function() {
+        menuActions.show(ui, {
+          cancel: function() {
+          }
+        });
+      }
+    },
     ' Build': {
       callback: function() {
       }
@@ -124,18 +135,8 @@ function menuHome() {
             redraw();
             return;
           }
-          firmware.load(file, function(error, def) {
-            ui.remove(fm);
-            var i,j;
-            for(i = 0; i < def.maps.length; i++) {
-              for(j = 0; j < state.keyboard.keys; j++) 
-                state.keys[j].setMapping(i, def.maps[i][j]);
-            }
-            redraw();
-            info.print("Loaded "+def.maps.length+" maps");
-            mainMenu.focus();
-          });
-
+          ui.remove(fm);
+          load(file);
         });
       }
     }, 
@@ -169,7 +170,7 @@ function menuHome() {
         });
         saveName.readInput(function(err, path) {
           if(path !== null) {
-            firmware.save(path, { keys: state.keys }, state.keyboard, function(err, msg) {
+            state.firmware.save(path, { keys: state.keys }, state.keyboard, function(err, msg) {
               if(err) state.helpMessage = err;
               else state.helpMessage = "Saved to "+path;
               state.screen.remove(saveName);
@@ -204,6 +205,19 @@ function menuHome() {
     }
   });
 }
+function load(file) {
+  state.firmware.load(file, function(error, def) {
+    var i,j;
+    for(i = 0; i < def.maps.length; i++) {
+      for(j = 0; j < state.keyboard.keys; j++) 
+        state.keys[j].setMapping(i, def.maps[i][j]);
+    }
+    state.actions = def.actions;
+    state.setHelp("Loaded "+def.maps.length+" layers, "+def.actions.length+" actions");
+    redraw();
+    mainMenu.focus();
+  });
+}
 function eventListener(msg) {
   switch(msg) {
     case "redraw": screen.render(); break;
@@ -218,7 +232,6 @@ info.initLayout(ui);
 info.addListener(eventListener);
 screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
-state.keyboard = keyboards.keyboards['ergodox'];
 
 menuHome();
 state.pushFocus(mainMenu);
@@ -242,4 +255,7 @@ state.on('redraw', redraw);
 screen.on('keypress', state.keyListener);
 statusBar.setContent(state.getStatusLine());
 screen.render();
+state.setHelp(process.argv.join(' '));
+redraw();
+if(process.argv.length > 2) load(process.argv[2]);
 

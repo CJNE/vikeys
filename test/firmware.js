@@ -24,4 +24,15 @@ describe("tmk_load", function() {
       });
     })
   });
+  describe("#parse actions", function() {
+    it('should find all actions', function(done) {
+      firmware.load('./test/tmk.h', function(error, def) {
+        if(error) done(error);
+        assert.equal(9, def.actions.length);
+        assert.equal('ACTION_LAYER_MOMENTARY', def.actions[1].fn);
+        assert.equal('2', def.actions[1].args[0]);
+        done();
+      });
+    })
+  });
 });
