@@ -7,13 +7,14 @@ vikeys
 
 
 Inspired by vim it aims to make the editing a breeze.
-This is not complete at this stage, initial support for ErgoDox and the tmk firmware is there.
+
+***This is not complete at this stage, initial support for ErgoDox and the tmk firmware is almost there.***
 
 ###Currently supported keyboards
-*  **ErgoDox**
+*  **ErgoDox** 
 
 ###Firmwares
-*  **TMK** Loading and saving of keymap.h files
+*  [**TMK**](https://github.com/tmk/tmk_keyboard) Loading and saving of keymap.h files
 
 Install
 =======
@@ -51,6 +52,10 @@ In the upper part of the screen you will see a visual representation of your key
 Upon start the mode is "Normal" which means the navigation keys will work in the lower half of the screen. It is possible to work on the keyboard part of the screen from normal mode using the shift key in combination with the navigation keys (vi only). So for example to select the next key to the right from normal mode, hold down shift and press `l`.
 
 In order to use the regular arrow keys the mode can be changed to select mode. From normal mode press `Shift-s` or `i`. Press `Escape` to exit select mode. 
+
+####Creating a new layout
+Keyboards are defined in lib/keyboards.js, please send in a pull request if you want a new keyboard layout added.
+
 
 
 
