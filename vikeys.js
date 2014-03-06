@@ -8,7 +8,6 @@ var screen = state.screen;
 var info = require('./lib/ui/info.js');
 var menuAssign = require('./lib/ui/assignmenu.js');
 var menuActions = require('./lib/ui/actionsmenu.js');
-var pc = require('path-complete');
 
 state.keyboard = keyboards.keyboards['ergodox'];
 state.firmware = require('./firmwares/tmk.js');
