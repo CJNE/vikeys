@@ -19,6 +19,7 @@ Inspired by vim it aims to make the editing a breeze.
 Install
 =======
 
+***Note: This has only been tested on OS X so far***
 This is a Node js application so the first thing you will need is NodeJS.
 
 [Install node](http://nodejs.com)
