@@ -33,22 +33,6 @@ var ui = blessed.box({
   },
   keys: 'vi'
 });
-var statusBar = blessed.box({
-  bottom: 0,
-  left: 0,
-  right: 0,
-  width: '100%',
-  height: 1,
-  tags: true,
-  style: {
-    bg: 'lightyellow',
-    fg: 'white',
-    border: {
-      bg: 'lightyellow',
-      fg: 'purple'
-    }
-  }
-});
 var keyboardBox = blessed.box({
   top: '0%',
   left: '0%',
@@ -161,18 +145,17 @@ function menuHome() {
             fg: 'white'
           }
         });
-        state.helpMessage = "Enter file name to write to";
-        statusBar.bottom = 1;
+        state.setHelp("Enter file name to write to");
+        state.getStatusBar().bottom = 1;
         screen.append(saveName);
-        redraw();
         //saveName.focus();
         saveName.on('completion', function(matches) {
           if(matches === null || matches.length == 1) {
             state.statusExtra = '';
-            statusBar.height = 1;
+            state.getStatusBar().height = 1;
             state.statusExtra = ''; //matches.join(' ');
           } else {
-            statusBar.height = 2;
+            state.getStatusBar().height = 2;
             state.statusExtra = matches.join(' ');
           }
           redraw();
@@ -180,18 +163,17 @@ function menuHome() {
         saveName.readInput(function(err, path) {
           if(path !== null) {
             state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboard, function(err, msg) {
-              if(err) state.helpMessage = err;
-              else state.helpMessage = "Saved to "+path;
+              if(err) state.setHelp(err);
+              else state.setHelp("Saved to "+path);
               screen.remove(saveName);
-              statusBar.bottom = 0;
-              statusBar.height = 1;
-              redraw();
+              state.getStatusBar().bottom = 0;
+              state.getStatusBar().height = 1;
             });
           }
           else {
             screen.remove(saveName);
-            statusBar.bottom = 0;
-            statusBar.height = 1;
+            state.getStatusBar().bottom = 0;
+            state.getStatusBar().height = 1;
             redraw();
           }
         });
@@ -228,7 +210,7 @@ function eventListener(msg) {
 screen.append(keyboardBox);
 screen.append(mainMenu);
 screen.append(ui);
-screen.append(statusBar);
+screen.append(state.getStatusBar());
 screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
 
@@ -246,15 +228,10 @@ function redraw() {
   for(i = 0; i < 76; i++) {
     state.keys[i].draw();
   }
-  statusBar.setContent(state.getStatusLine());
-  screen.render();
-
+  state.drawStatus();
 }
 state.on('redraw', redraw);
 screen.on('keypress', state.keyListener);
-statusBar.setContent(state.getStatusLine());
-screen.render();
-state.setHelp(process.argv.join(' '));
 redraw();
 if(process.argv.length > 2) load(process.argv[2]);
 
