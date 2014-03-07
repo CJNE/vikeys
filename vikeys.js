@@ -95,6 +95,7 @@ function menuHome() {
             });
           },
           cancel: function() {
+            menuAssign.hide();
           }
         });
       }
@@ -103,12 +104,15 @@ function menuHome() {
       callback: function() {
         menuActions.show(ui, {
           cancel: function() {
+            menuActions.hide();
           }
         });
       }
     },
     ' Build': {
       callback: function() {
+        state.setHelp("Not implemented yet");
+        redraw();
       }
     },
     ' Load': {  
@@ -175,7 +179,7 @@ function menuHome() {
         });
         saveName.readInput(function(err, path) {
           if(path !== null) {
-            state.firmware.save(path, { keys: state.keys }, state.keyboard, function(err, msg) {
+            state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboard, function(err, msg) {
               if(err) state.helpMessage = err;
               else state.helpMessage = "Saved to "+path;
               screen.remove(saveName);
@@ -208,6 +212,8 @@ function load(file) {
         state.keys[j].setMapping(i, def.maps[i][j]);
     }
     state.actions = def.actions;
+    state.fn_ids = def.fn_ids;
+    state.action_fn = def.action_fn;
     state.setHelp("Loaded "+def.maps.length+" layers, "+def.actions.length+" actions");
     redraw();
     mainMenu.focus();
