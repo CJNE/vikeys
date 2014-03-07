@@ -87,7 +87,7 @@ exports.save = function(path, data, keyboard, clb) {
     }
   }
   str += layers.join(",\n");
-  str += "\n}";
+  str += "\n};";
 
   //Write actions
   if(data.fn_ids.length > 0) 
