@@ -1,7 +1,7 @@
 vikeys
 ======
 
-## Terminal user interface for configuring key mappings in keyboard firmwares.
+## Terminal user interface for key mappings in keyboard firmwares.
 
 [![vikeys](https://github.com/cjne/vikeys/raw/master/img/vikeys.png)](#features)
 
