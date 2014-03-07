@@ -57,7 +57,7 @@ exports.load = function(path, clb) {
     for(i=0; i < actiondefs.length; i++) {
       action = re.exec(actiondefs[i]);
       //console.log(actiondefs[i]);
-      actions.push({ fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
+      actions.push({ mapping: "FN"+i, fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
     }
     
     //Parse function_id
