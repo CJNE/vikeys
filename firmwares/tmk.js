@@ -7,6 +7,30 @@ exports.load = function(path, clb) {
     if (err) clb(err);
     var re;
     data = data.toString();
+
+    //Grab any action_function as is
+    re = /\s*void\s+action_function/mgi;
+    var match = re.exec(data);
+    var actionFunction = "";
+    var chunk;
+    var lbrCount = 0;
+    var foundFirst = false;
+    if(match !== null) {
+      chunk = data.slice(match.index);
+      state.debug(chunk);
+      for(i = chunk.indexOf("{"); i < chunk.length; i++) {
+        if(chunk[i] == "{") {
+          lbrCount++;
+          foundFirst = true;
+        }
+        if(chunk[i] == "}") lbrCount--;
+        if(lbrCount == 0 && foundFirst) {
+          actionFunction = chunk.substr(0, i+1);
+          break;
+        }
+      }
+    }
+
     //Remove comments
     data = data.replace(/(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm, '$1');
 
@@ -41,28 +65,6 @@ exports.load = function(path, clb) {
     var iddef = re.exec(data);
     var ids = iddef[1].split(',').map(function(id) { return id.trim() });
 
-    //Grab any action_function as is
-    re = /\s*void\s+action_function/mgi;
-    var match = re.exec(data);
-    var actionFunction = "";
-    var chunk;
-    var lbrCount = 0;
-    var foundFirst = false;
-    if(match !== null) {
-      chunk = data.slice(match.index);
-      state.debug(chunk);
-      for(i = chunk.indexOf("{"); i < chunk.length; i++) {
-        if(chunk[i] == "{") {
-          lbrCount++;
-          foundFirst = true;
-        }
-        if(chunk[i] == "}") lbrCount--;
-        if(lbrCount == 0 && foundFirst) {
-          actionFunction = chunk.substr(0, i+1);
-          break;
-        }
-      }
-    }
 
     clb(null, { action_fn: actionFunction, fn_ids: ids, maps: maps, actions: actions});
   }); 
