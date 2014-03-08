@@ -2,6 +2,139 @@ var state = require('../lib/state');
 var fs = require('fs')
 var MAX_LAYERS = 32;
 exports.MAX_ACTIONS = 32;
+exports.types = {
+  modifier: {
+    ui: 'selectkey',
+    groups: ["Control keys"]
+  },
+  key: {
+    ui: 'selectkey'
+  },
+  layer: {
+    ui: 'number',
+    min: 0,
+    max: 31
+  },
+  on: {
+    ui: 'radio',
+    options: { "ON_PRESS": "Press", "ON_RELEASE": "Release", "ON_BOTH": "Both" }
+  }
+}
+
+exports.actions = [
+  { 
+    label: "Modified key",
+    id: "ACTION_MODS_KEY",
+    params: [
+      [{ label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1}], 
+      { label: 'Key', type: 'key', help: "A key", required: 1 }
+    ],
+    help: "Combines one or more modifier keys with another key, Shift-1 to get ! for example"
+  },
+  {
+    label: "Modifier tap key",
+    id: "ACTION_MODS_TAP_KEY",
+    params: [
+      { label: 'Modifier', type: "modifier", help: "A modifier key, shift for example", required: 1}, 
+      { label: 'Key', type: 'key', help: "A key", required: 1 }
+    ],
+    help: "Acts as the modifier while held down, send key on tap"
+  },
+  {
+    label: "Default layer",
+    id: 'ACTION_DEFAULT_LAYER',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to set (0-31)", required: 1 }
+    ],
+    help: "Sets the default layer and activates it"
+  },
+  {
+    label: "Momentary layer",
+    id: 'ACTION_LAYER_MOMENTARY',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
+    ],
+    help: "Activates layer while holding, switches back on release"
+  },
+  {
+    label: "Toggle layer",
+    id: 'ACTION_LAYER_TOGGLE',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
+    ],
+    help: "Activates layer on tap and deactivates on the next tap."
+  },
+  {
+    label: "Momentary layer/tap key",
+    id: 'ACTION_LAYER_TAP_KEY',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to activate while holding", required: 1 },
+      { label: "Key", type: 'key', help: "What key to send on tap", required: 1 }
+    ],
+    help: "Activates layer while holding, sends key on tap"
+  },
+  {
+    label: "Momentary layer tap toggle",
+    id: 'ACTION_LAYER_TAP_TOGGLE',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to activate while holding", required: 1 }
+    ],
+    help: "Activates layer while holding, toggle layer on tap"
+  },
+  {
+    label: "Set layer",
+    id: 'ACTION_LAYER_SET',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to set", required: 1 },
+      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Turn on only this layer"
+  },
+  {
+    label: "Set layer and clear",
+    id: 'ACTION_LAYER_SET_CLEAR',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to set", required: 1 }
+    ],
+    help: "Turn on only this layer and clear layers on release"
+  },
+  {
+    label: "Turn on layer",
+    id: 'ACTION_LAYER_ON',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to turn on", required: 1 },
+      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Set layer state to on"
+  },
+  {
+    label: "Turn off layer",
+    id: 'ACTION_LAYER_OFF',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to turn off", required: 1 },
+      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Set layer state to off"
+  },
+  {
+    label: "Invert layer",
+    id: 'ACTION_LAYER_INVERT',
+    params: [
+      { label: "Layer", type: 'layer', help: "What layer to invert state for", required: 1 },
+      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Inverts state of layer. If the layer is on it will be turned off."
+  }
+  //TODO: Add bitwise layer actions
+  //TODO: Add macros
+];
+
+
+
+
+  
+    
+
 exports.load = function(path, clb) {
   fs.readFile(path, function (err, data) {
     if (err) clb(err);
