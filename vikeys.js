@@ -225,7 +225,7 @@ for(i = 0; i < state.keyboard.keys; i++) {
 }
 keyboard.initLayout(keyboardBox, state.keyboard);
 function redraw() {
-  for(i = 0; i < 76; i++) {
+  for(i = 0; i < state.keyboard.keys; i++) {
     state.keys[i].draw();
   }
   state.drawStatus();
