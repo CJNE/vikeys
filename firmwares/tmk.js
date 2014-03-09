@@ -15,6 +15,12 @@ exports.types = {
     min: 0,
     max: 31
   },
+  fn_id: {
+    ui: 'select_fn_id'
+  },
+  fn_opt: {
+    ui: 'select_fn_opt'
+  },
   on: {
     ui: 'radio',
     options: { "ON_PRESS": "Press", "ON_RELEASE": "Release", "ON_BOTH": "Both" }
@@ -23,6 +29,27 @@ exports.types = {
 
 exports.actions = [
   { 
+    group: "Custom",
+    label: "Call function",
+    id: "ACTION_FUNCTION",
+    params: [
+      { label: "Function id", type: 'fn_id', help: "The function id", required: 1 },
+      { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
+    ],
+    help: "Call a custom C function"
+  },
+  {
+    group: "Custom",
+    label: "Call function tap",
+    id: "ACTION_FUNCTION_TAP",
+    params: [
+      { label: "Function id", type: 'fn_id', help: "The function id", required: 1 },
+      { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
+    ],
+    help: "Call a custom C function, support for tapping"
+  },
+  { 
+    group: "Mod keys",
     label: "Modified key",
     id: "ACTION_MODS_KEY",
     params: [
@@ -32,6 +59,7 @@ exports.actions = [
     help: "Combines one or more modifier keys with another key, Shift-1 to get ! for example"
   },
   {
+    group: "Mod keys",
     label: "Modifier tap key",
     id: "ACTION_MODS_TAP_KEY",
     params: [
@@ -41,6 +69,7 @@ exports.actions = [
     help: "Acts as the modifier while held down, send key on tap"
   },
   {
+    group: "Layer",
     label: "Default layer",
     id: 'ACTION_DEFAULT_LAYER',
     params: [
@@ -49,6 +78,7 @@ exports.actions = [
     help: "Sets the default layer and activates it"
   },
   {
+    group: "Layer",
     label: "Momentary layer",
     id: 'ACTION_LAYER_MOMENTARY',
     params: [
@@ -57,6 +87,7 @@ exports.actions = [
     help: "Activates layer while holding, switches back on release"
   },
   {
+    group: "Layer",
     label: "Toggle layer",
     id: 'ACTION_LAYER_TOGGLE',
     params: [
@@ -65,6 +96,7 @@ exports.actions = [
     help: "Activates layer on tap and deactivates on the next tap."
   },
   {
+    group: "Layer",
     label: "Momentary layer/tap key",
     id: 'ACTION_LAYER_TAP_KEY',
     params: [
@@ -74,6 +106,7 @@ exports.actions = [
     help: "Activates layer while holding, sends key on tap"
   },
   {
+    group: "Layer",
     label: "Momentary layer tap toggle",
     id: 'ACTION_LAYER_TAP_TOGGLE',
     params: [
@@ -82,6 +115,7 @@ exports.actions = [
     help: "Activates layer while holding, toggle layer on tap"
   },
   {
+    group: "Layer",
     label: "Set layer",
     id: 'ACTION_LAYER_SET',
     params: [
@@ -91,6 +125,7 @@ exports.actions = [
     help: "Turn on only this layer"
   },
   {
+    group: "Layer",
     label: "Set layer and clear",
     id: 'ACTION_LAYER_SET_CLEAR',
     params: [
@@ -99,6 +134,7 @@ exports.actions = [
     help: "Turn on only this layer and clear layers on release"
   },
   {
+    group: "Layer",
     label: "Turn on layer",
     id: 'ACTION_LAYER_ON',
     params: [
@@ -108,6 +144,7 @@ exports.actions = [
     help: "Set layer state to on"
   },
   {
+    group: "Layer",
     label: "Turn off layer",
     id: 'ACTION_LAYER_OFF',
     params: [
@@ -117,6 +154,7 @@ exports.actions = [
     help: "Set layer state to off"
   },
   {
+    group: "Layer",
     label: "Invert layer",
     id: 'ACTION_LAYER_INVERT',
     params: [
