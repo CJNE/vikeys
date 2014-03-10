@@ -53,7 +53,7 @@ exports.actions = [
     label: "Modified key",
     id: "ACTION_MODS_KEY",
     params: [
-      [{ label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1}], 
+      { label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1, multiple: true}, 
       { label: 'Key', type: 'key', help: "A key", required: 1 }
     ],
     help: "Combines one or more modifier keys with another key, Shift-1 to get ! for example"
@@ -63,7 +63,7 @@ exports.actions = [
     label: "Modifier tap key",
     id: "ACTION_MODS_TAP_KEY",
     params: [
-      { label: 'Modifier', type: "modifier", help: "A modifier key, shift for example", required: 1}, 
+      { label: 'Modifier', type: "modifier", default: "LSFT", help: "A modifier key, shift for example", required: 1}, 
       { label: 'Key', type: 'key', help: "A key", required: 1 }
     ],
     help: "Acts as the modifier while held down, send key on tap"
@@ -73,7 +73,7 @@ exports.actions = [
     label: "Default layer",
     id: 'ACTION_DEFAULT_LAYER',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to set (0-31)", required: 1 }
+      { label: "Layer", type: 'layer', default: "0", help: "What layer to set (0-31)", required: 1 }
     ],
     help: "Sets the default layer and activates it"
   },
@@ -82,7 +82,7 @@ exports.actions = [
     label: "Momentary layer",
     id: 'ACTION_LAYER_MOMENTARY',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
+      { label: "Layer", type: 'layer', default: "0", help: "What layer to activate (0-31)", required: 1 }
     ],
     help: "Activates layer while holding, switches back on release"
   },
