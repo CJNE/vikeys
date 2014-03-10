@@ -46,7 +46,7 @@ var mainMenu = widgets.listmenu({
   height: '50%',
   keys: true,
   mouse: true,
-  keyListener: state.keyListener,
+  keyListener: state.keyListener(),
   vi: true,
   name: "Main menu",
   style: {
@@ -68,7 +68,7 @@ function menuHome() {
   mainMenu.setItems({
     ' Assign': {
       callback: function() {
-        menuAssign.show(ui, {
+        menuAssign.show(ui, state, {
           assign: function(code) {
             state.keys[state.currentKey].setMapping(state.layer, code);
             state.keys.forEach(function(key) {
@@ -86,7 +86,7 @@ function menuHome() {
     },
     ' Actions': {
       callback: function() {
-        menuActions.show(ui, {
+        menuActions.show(ui, state, {
           cancel: function() {
             menuActions.hide();
           }
@@ -220,10 +220,10 @@ state.pushFocus(mainMenu);
 var i = 0;
 var keyInstance;
 for(i = 0; i < state.keyboard.keys; i++) {
-  keyInstance = new key.Instance(i);
+  keyInstance = new key.Instance(i, state);
   state.keys.push(keyInstance);
 }
-keyboard.initLayout(keyboardBox, state.keyboard);
+keyboard.initLayout(keyboardBox, state.keyboard, state);
 function redraw() {
   for(i = 0; i < state.keyboard.keys; i++) {
     state.keys[i].draw();
@@ -231,7 +231,7 @@ function redraw() {
   state.drawStatus();
 }
 state.on('redraw', redraw);
-screen.on('keypress', state.keyListener);
+screen.on('keypress', state.keyListener());
 redraw();
 if(process.argv.length > 2) load(process.argv[2]);
 

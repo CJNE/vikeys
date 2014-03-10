@@ -1,4 +1,3 @@
-var state = require('../lib/state');
 var fs = require('fs')
 var MAX_LAYERS = 32;
 exports.MAX_ACTIONS = 32;
@@ -188,7 +187,6 @@ exports.load = function(path, clb) {
     var foundFirst = false;
     if(match !== null) {
       chunk = data.slice(match.index);
-      state.debug(chunk);
       for(i = chunk.indexOf("{"); i < chunk.length; i++) {
         if(chunk[i] == "{") {
           lbrCount++;
