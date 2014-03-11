@@ -1,6 +1,8 @@
 var fs = require('fs')
 var MAX_LAYERS = 32;
-exports.MAX_ACTIONS = 32;
+var MAX_ACTIONS = 32;
+exports.MAX_ACTIONS = MAX_ACTIONS;
+exports.MAX_LAYERS = MAX_LAYERS;
 exports.types = {
   modifier: {
     ui: 'selectkey',

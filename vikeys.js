@@ -9,13 +9,12 @@ var screen = blessed.screen(screenoptions);
 var widgets = require('./lib/ui/widgets.js');
 var keyboard = require('./lib/keyboard');
 var keyboards = require('./lib/keyboards');
-var key = require('./lib/key');
 var state = require('./lib/state')
 var menuAssign = require('./lib/ui/assignmenu.js');
 var menuActions = require('./lib/ui/actionsmenu.js');
 
 state.setScreen(screen);
-state.keyboard = keyboards.keyboards['ergodox'];
+state.keyboardModel = keyboards.keyboards['ergodox'];
 state.firmware = require('./firmwares/tmk.js');
 
 var ui = blessed.box({
@@ -70,7 +69,7 @@ function menuHome() {
       callback: function() {
         menuAssign.show(ui, state, {
           assign: function(code) {
-            state.keys[state.currentKey].setMapping(state.layer, code);
+            state.keys[state.currentKey].setMapping(state.keyboard.getLayer(), code);
             state.keys.forEach(function(key) {
               if(key.isSelected()) {
                 key.setMapping(state.layer, code);
@@ -98,7 +97,6 @@ function menuHome() {
     ' Build': {
       callback: function() {
         state.setHelp("Not implemented yet");
-        redraw();
       }
     },
     ' Load': {  
@@ -127,7 +125,7 @@ function menuHome() {
           if(error || file == "" || typeof(file) === 'undefined' || file == null) {
             ui.remove(fm);
             mainMenu.focus();
-            redraw();
+            state.redraw();
             return;
           }
           ui.remove(fm);
@@ -160,11 +158,11 @@ function menuHome() {
             state.getStatusBar().height = 2;
             state.statusExtra = matches.join(' ');
           }
-          redraw();
+          state.redraw();
         });
         saveName.readInput(function(err, path) {
           if(path !== null) {
-            state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboard, function(err, msg) {
+            state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboardModel, function(err, msg) {
               if(err) state.setHelp(err);
               else state.setHelp("Saved to "+path);
               screen.remove(saveName);
@@ -176,7 +174,7 @@ function menuHome() {
             screen.remove(saveName);
             state.getStatusBar().bottom = 0;
             state.getStatusBar().height = 1;
-            redraw();
+            state.redraw();
           }
         });
       }
@@ -190,16 +188,12 @@ function menuHome() {
 }
 function load(file) {
   state.firmware.load(file, function(error, def) {
-    var i,j;
-    for(i = 0; i < def.maps.length; i++) {
-      for(j = 0; j < state.keyboard.keys; j++) 
-        state.keys[j].setMapping(i, def.maps[i][j]);
-    }
+    state.keyboard.addMappings(def.maps);
     state.actions = def.actions;
     state.fn_ids = def.fn_ids;
     state.action_fn = def.action_fn;
     state.setHelp("Loaded "+def.maps.length+" layers, "+def.actions.length+" actions");
-    redraw();
+    state.redraw();
     mainMenu.focus();
   });
 }
@@ -217,23 +211,13 @@ screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
 
 menuHome();
-state.pushFocus(mainMenu);
+mainMenu.focus();
+//state.pushFocus(mainMenu);
 
-var i = 0;
-var keyInstance;
-for(i = 0; i < state.keyboard.keys; i++) {
-  keyInstance = new key.Instance(i, state);
-  state.keys.push(keyInstance);
-}
-keyboard.initLayout(keyboardBox, state.keyboard, state);
-function redraw() {
-  for(i = 0; i < state.keyboard.keys; i++) {
-    state.keys[i].draw();
-  }
-  state.drawStatus();
-}
-state.on('redraw', redraw);
+keyboard.init(keyboardBox, state.keyboardModel, state);
+state.keyboard = keyboard;
+keyboard.setKeyListener(state.keyListener());
 screen.on('keypress', state.keyListener());
-redraw();
+state.redraw();
 if(process.argv.length > 2) load(process.argv[2]);
 
