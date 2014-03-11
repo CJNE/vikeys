@@ -80,6 +80,7 @@ function menuHome() {
           },
           cancel: function() {
             menuAssign.hide();
+            mainMenu.focus();
           }
         });
       }
@@ -89,6 +90,7 @@ function menuHome() {
         menuActions.show(ui, state, {
           cancel: function() {
             menuActions.hide();
+            mainMenu.focus();
           }
         });
       }
