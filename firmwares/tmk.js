@@ -93,7 +93,7 @@ exports.actions = [
     label: "Toggle layer",
     id: 'ACTION_LAYER_TOGGLE',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
     ],
     help: "Activates layer on tap and deactivates on the next tap."
   },
@@ -102,7 +102,7 @@ exports.actions = [
     label: "Momentary layer/tap key",
     id: 'ACTION_LAYER_TAP_KEY',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to activate while holding", required: 1 },
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate while holding", required: 1 },
       { label: "Key", type: 'key', help: "What key to send on tap", required: 1 }
     ],
     help: "Activates layer while holding, sends key on tap"
@@ -112,7 +112,7 @@ exports.actions = [
     label: "Momentary layer tap toggle",
     id: 'ACTION_LAYER_TAP_TOGGLE',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to activate while holding", required: 1 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate while holding", required: 1 }
     ],
     help: "Activates layer while holding, toggle layer on tap"
   },
@@ -121,8 +121,8 @@ exports.actions = [
     label: "Set layer",
     id: 'ACTION_LAYER_SET',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to set", required: 1 },
-      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to set", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
     ],
     help: "Turn on only this layer"
   },
@@ -131,7 +131,7 @@ exports.actions = [
     label: "Set layer and clear",
     id: 'ACTION_LAYER_SET_CLEAR',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to set", required: 1 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to set", required: 1 }
     ],
     help: "Turn on only this layer and clear layers on release"
   },
@@ -140,8 +140,8 @@ exports.actions = [
     label: "Turn on layer",
     id: 'ACTION_LAYER_ON',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to turn on", required: 1 },
-      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to turn on", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
     ],
     help: "Set layer state to on"
   },
@@ -150,8 +150,8 @@ exports.actions = [
     label: "Turn off layer",
     id: 'ACTION_LAYER_OFF',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to turn off", required: 1 },
-      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to turn off", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
     ],
     help: "Set layer state to off"
   },
@@ -160,8 +160,8 @@ exports.actions = [
     label: "Invert layer",
     id: 'ACTION_LAYER_INVERT',
     params: [
-      { label: "Layer", type: 'layer', help: "What layer to invert state for", required: 1 },
-      { label: "When", type: 'on', help: "When to trigger", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to invert state for", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
     ],
     help: "Inverts state of layer. If the layer is on it will be turned off."
   }
