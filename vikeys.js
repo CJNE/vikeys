@@ -12,7 +12,9 @@ var keyboards = require('./lib/keyboards');
 var state = require('./lib/state')
 var menuAssign = require('./lib/ui/assignmenu.js');
 var menuActions = require('./lib/ui/actionsmenu.js');
+var pjson = require('./package.json');
 
+process.title = "Vikeys"+pjson.version;
 state.setScreen(screen);
 state.keyboardModel = keyboards.keyboards['ergodox'];
 state.firmware = require('./firmwares/tmk.js');
@@ -174,7 +176,7 @@ function menuHome() {
             screen.remove(saveName);
             state.getStatusBar().bottom = 0;
             state.getStatusBar().height = 1;
-            state.redraw();
+            state.setHelp("");
           }
         });
       }
