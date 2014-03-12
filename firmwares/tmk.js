@@ -5,11 +5,12 @@ exports.MAX_ACTIONS = MAX_ACTIONS;
 exports.MAX_LAYERS = MAX_LAYERS;
 exports.types = {
   modifier: {
-    ui: 'selectkey',
+    ui: 'select_key',
     groups: ["Control keys"]
   },
   key: {
-    ui: 'selectkey'
+    ui: 'select_key',
+    groups: ["Alphas", "Number row", "Spacing", "Punctuation", "Function keys", "Navigation", "Numpad", "Keypad"]
   },
   layer: {
     ui: 'number',
