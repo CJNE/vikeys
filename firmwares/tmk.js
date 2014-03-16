@@ -48,45 +48,24 @@ exports.types = {
 }
 
 exports.actions = [
-  { 
-    group: "Custom",
-    label: "Call function",
-    id: "ACTION_FUNCTION",
+  {
+    group: "Layer",
+    label: "Set layer",
+    id: 'ACTION_LAYER_SET',
     params: [
-      { label: "Function id", type: 'fn_id', help: "The function id", required: 1 },
-      { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to set", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
     ],
-    help: "Call a custom C function"
+    help: "Turn on only this layer"
   },
   {
-    group: "Custom",
-    label: "Call function tap",
-    id: "ACTION_FUNCTION_TAP",
+    group: "Layer",
+    label: "Set layer and clear",
+    id: 'ACTION_LAYER_SET_CLEAR',
     params: [
-      { label: "Function id", type: 'fn_id', help: "The function id", required: 1 },
-      { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to set", required: 1 }
     ],
-    help: "Call a custom C function, support for tapping"
-  },
-  { 
-    group: "Mod keys",
-    label: "Modified key",
-    id: "ACTION_MODS_KEY",
-    params: [
-      { label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1, multiple: true}, 
-      { label: 'Key', type: 'key', help: "A key", required: 1 }
-    ],
-    help: "Combines one or more modifier keys with another key, Shift-1 to get ! for example"
-  },
-  {
-    group: "Mod keys",
-    label: "Modifier tap key",
-    id: "ACTION_MODS_TAP_KEY",
-    params: [
-      { label: 'Modifier', type: "modifier", default: "LSFT", help: "A modifier key, shift for example", required: 1}, 
-      { label: 'Key', type: 'key', help: "A key", required: 1 }
-    ],
-    help: "Acts as the modifier while held down, send key on tap"
+    help: "Turn on only this layer and clear layers on release"
   },
   {
     group: "Layer",
@@ -108,25 +87,6 @@ exports.actions = [
   },
   {
     group: "Layer",
-    label: "Toggle layer",
-    id: 'ACTION_LAYER_TOGGLE',
-    params: [
-      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
-    ],
-    help: "Activates layer on tap and deactivates on the next tap."
-  },
-  {
-    group: "Layer",
-    label: "Momentary layer/tap key",
-    id: 'ACTION_LAYER_TAP_KEY',
-    params: [
-      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate while holding", required: 1 },
-      { label: "Key", type: 'key', help: "What key to send on tap", required: 1 }
-    ],
-    help: "Activates layer while holding, sends key on tap"
-  },
-  {
-    group: "Layer",
     label: "Momentary layer tap toggle",
     id: 'ACTION_LAYER_TAP_TOGGLE',
     params: [
@@ -136,22 +96,12 @@ exports.actions = [
   },
   {
     group: "Layer",
-    label: "Set layer",
-    id: 'ACTION_LAYER_SET',
+    label: "Toggle layer",
+    id: 'ACTION_LAYER_TOGGLE',
     params: [
-      { label: "Layer", default: "0", type: 'layer', help: "What layer to set", required: 1 },
-      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate (0-31)", required: 1 }
     ],
-    help: "Turn on only this layer"
-  },
-  {
-    group: "Layer",
-    label: "Set layer and clear",
-    id: 'ACTION_LAYER_SET_CLEAR',
-    params: [
-      { label: "Layer", default: "0", type: 'layer', help: "What layer to set", required: 1 }
-    ],
-    help: "Turn on only this layer and clear layers on release"
+    help: "Activates layer on tap and deactivates on the next tap."
   },
   {
     group: "Layer",
@@ -182,6 +132,46 @@ exports.actions = [
       { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
     ],
     help: "Inverts state of layer. If the layer is on it will be turned off."
+  },
+  { 
+    group: "Mod keys",
+    label: "Modified key",
+    id: "ACTION_MODS_KEY",
+    params: [
+      { label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1, multiple: true}, 
+      { label: 'Key', type: 'key', help: "A key", required: 1 }
+    ],
+    help: "Combines one or more modifier keys with another key, Shift-1 to get ! for example"
+  },
+  {
+    group: "Mod keys",
+    label: "Modifier tap key",
+    id: "ACTION_MODS_TAP_KEY",
+    params: [
+      { label: 'Modifier', type: "modifier", default: "LSFT", help: "A modifier key, shift for example", required: 1}, 
+      { label: 'Key', type: 'key', help: "A key", required: 1 }
+    ],
+    help: "Acts as the modifier while held down, send key on tap"
+  },
+  { 
+    group: "Custom",
+    label: "Call function",
+    id: "ACTION_FUNCTION",
+    params: [
+      { label: "Function id", type: 'fn_id', help: "The function id", required: 1 },
+      { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
+    ],
+    help: "Call a custom C function"
+  },
+  {
+    group: "Custom",
+    label: "Call function tap",
+    id: "ACTION_FUNCTION_TAP",
+    params: [
+      { label: "Function id", type: 'fn_id', help: "The function id", required: 1 },
+      { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
+    ],
+    help: "Call a custom C function, support for tapping"
   }
   //TODO: Add bitwise layer actions
   //TODO: Add macros
@@ -227,15 +217,17 @@ exports.load = function(path, clb) {
     //Parse keymap definitions
     var defs = data.match(/\n\s*KEYMAP\s*\(([^]+?)\),?$/mgi); ///.*KEYMAP\((.*)\),/ig);
     var i, map, keys, maps = [];
-    for(i=0; i < defs.length; i++) {
-      map = defs[i].trim();
-      keys = map.match(/\s*\w+\s*,?/mg);
-      keys = keys.map(function(key) {
-        key = key.replace(/,/,'');
-        key = key.trim();
-        return key;
-      }).splice(1);
-      maps.push(keys);
+    if(defs) {
+      for(i=0; i < defs.length; i++) {
+        map = defs[i].trim();
+        keys = map.match(/\s*\w+\s*,?/mg);
+        keys = keys.map(function(key) {
+          key = key.replace(/,/,'');
+          key = key.trim();
+          return key;
+        }).splice(1);
+        maps.push(keys);
+      }
     }
 
     //Parse action definitions
@@ -273,7 +265,7 @@ exports.save = function(path, data, keyboard, clb) {
     keysDef = "  KEYMAP( // Layer "+layer+"\n";
     for(i = 0; i < keyboard.keys; i++) {
       mapping = data.keys[i].getMapping(layer);
-      if(typeof(mapping) === 'undefined') mapping = "TRNSs";
+      if(typeof(mapping) === 'undefined') mapping = "TRNS";
       else allEmpty = false;
       keysDef += (i == 0 ? "    ":", ")+mapping;
     }
