@@ -68,6 +68,7 @@ var mainMenu = widgets.listmenu({
 function menuHome() {
   mainMenu.setItems({
     ' Assign': {
+      help: "Map keys",
       callback: function() {
         menuAssign.show(ui, state, {
           assign: function(code) {
@@ -87,6 +88,7 @@ function menuHome() {
       }
     },
     ' Actions': {
+      help: "List and edit action functions",
       callback: function() {
         menuActions.show(ui, state, {
           cancel: function() {
@@ -97,11 +99,13 @@ function menuHome() {
       }
     },
     ' Build': {
+      help: "Build and upload firmware",
       callback: function() {
         state.setHelp("Not implemented yet");
       }
     },
     ' Load': {  
+      help: "Load a keymap file",
       callback: function() {
         var fm = blessed.filemanager({
           keys: true,
@@ -136,6 +140,7 @@ function menuHome() {
       }
     }, 
     ' Save': {
+      help: "Save the current state",
       callback: function() {
         var saveName = widgets.filebox({
           bottom: 0,
@@ -182,6 +187,7 @@ function menuHome() {
       }
     },
     ' Exit': {
+      help: "Exit this program",
       callback: function() {
         process.exit(0);
       }
@@ -194,9 +200,9 @@ function load(file) {
     state.actions = def.actions;
     state.fn_ids = def.fn_ids;
     state.action_fn = def.action_fn;
+    mainMenu.focus();
     state.setHelp("Loaded "+def.maps.length+" layers, "+def.actions.length+" actions");
     state.redraw();
-    mainMenu.focus();
   });
 }
 function eventListener(msg) {
@@ -212,8 +218,6 @@ screen.append(state.getStatusBar());
 screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
 
-menuHome();
-mainMenu.focus();
 //state.pushFocus(mainMenu);
 
 keyboard.init(keyboardBox, state.keyboardModel, state);
@@ -221,5 +225,14 @@ state.keyboard = keyboard;
 keyboard.setKeyListener(state.keyListener());
 screen.on('keypress', state.keyListener());
 state.redraw();
+mainMenu.on('focus', function() {
+  state.setHelp('');
+});
+mainMenu.on('change', function(item, val) {
+  state.setHelp(item.help+ "");
+});
+menuHome();
+mainMenu.focus();
 if(process.argv.length > 2) load(process.argv[2]);
+else state.setHelp("Welcome to vikeys! Use arrows or vi keys to navigate");
 
