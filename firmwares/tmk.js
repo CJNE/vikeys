@@ -223,15 +223,16 @@ exports.load = function(path, clb) {
     //Parse action definitions
     re = /fn_actions\[\]\s*=\s*\{([^]+?)\};$/mgi;
     var actiondef = re.exec(data);
-    var actiondefs  = actiondef[1].trim().match(/\s*ACTION.*\(.*\),?/mg);
-    var action, actions = [], j;
-    re = /(ACTION_.*)\((.*)\)/i;
-    if (actiondefs != undefined) {
-        for(i=0; i < actiondefs.length; i++) {
-          action = re.exec(actiondefs[i]);
-          //console.log(actiondefs[i]);
-          actions.push({ mapping: "FN"+i, fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
-        }
+    var actions = [];
+    if(actiondef && actiondef.length > 0) {
+      var actiondefs  = actiondef[1].trim().match(/\s*ACTION.*\(.*\),?/mg);
+      var action, j;
+      re = /(ACTION_.*)\((.*)\)/i;
+      for(i=0; i < actiondefs.length; i++) {
+        action = re.exec(actiondefs[i]);
+        if(!action) continue;
+        actions.push({ mapping: "FN"+i, fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
+      }
     }
     
     //Parse function_id
