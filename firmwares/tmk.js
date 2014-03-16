@@ -6,11 +6,29 @@ exports.MAX_LAYERS = MAX_LAYERS;
 exports.types = {
   modifier: {
     ui: 'select_key',
-    groups: ["Control keys"]
+    groups: ["Modifier keys"],
+    filter: {
+      pre: function(val) {
+        if(!val || val.length < 5) return val;
+        return val.substr(4);
+      },
+      post: function(val) {
+        return "MOD_"+val;
+      }
+    }
   },
   key: {
     ui: 'select_key',
-    groups: ["Alphas", "Number row", "Spacing", "Punctuation", "Function keys", "Navigation", "Numpad", "Keypad"]
+    groups: ["Alphas", "Number row", "Spacing", "Punctuation", "Function keys", "Navigation", "Numpad", "Keypad"],
+    filter: {
+      pre: function(val) {
+        if(!val || val.length < 4) return val;
+        return val.substr(3);
+      },
+      post: function(val) {
+        return "KC_"+val;
+      }
+    }
   },
   layer: {
     ui: 'number',
