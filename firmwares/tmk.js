@@ -234,8 +234,9 @@ exports.load = function(path, clb) {
     
     //Parse function_id
     re = /function_id\s*\{([^]+?)\};$/mgi;
+    var ids = [];
     var iddef = re.exec(data);
-    var ids = iddef[1].split(',').map(function(id) { return id.trim() });
+    if(iddef) ids = iddef[1].split(',').map(function(id) { return id.trim() });
 
 
     clb(null, { action_fn: actionFunction, fn_ids: ids, maps: maps, actions: actions});
