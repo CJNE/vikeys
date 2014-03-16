@@ -226,10 +226,12 @@ exports.load = function(path, clb) {
     var actiondefs  = actiondef[1].trim().match(/\s*ACTION.*\(.*\),?/mg);
     var action, actions = [], j;
     re = /(ACTION_.*)\((.*)\)/i;
-    for(i=0; i < actiondefs.length; i++) {
-      action = re.exec(actiondefs[i]);
-      //console.log(actiondefs[i]);
-      actions.push({ mapping: "FN"+i, fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
+    if (actiondefs != undefined) {
+        for(i=0; i < actiondefs.length; i++) {
+          action = re.exec(actiondefs[i]);
+          //console.log(actiondefs[i]);
+          actions.push({ mapping: "FN"+i, fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
+        }
     }
     
     //Parse function_id
