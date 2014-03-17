@@ -215,19 +215,18 @@ exports.load = function(path, clb) {
     data = data.replace(/(?:\/\*(?:[\s\S]*?)\*\/)|(?:([\s;])+\/\/(?:.*)$)/gm, '$1');
 
     //Parse keymap definitions
-    var defs = data.match(/\n\s*KEYMAP\s*\(([^]+?)\),?$/mgi); ///.*KEYMAP\((.*)\),/ig);
+    re = /KEYMAP\s*\(([^]+?)\)/ig;
+    var defs;
     var i, map, keys, maps = [];
-    if(defs) {
-      for(i=0; i < defs.length; i++) {
-        map = defs[i].trim();
-        keys = map.match(/\s*\w+\s*,?/mg);
-        keys = keys.map(function(key) {
-          key = key.replace(/,/,'');
-          key = key.trim();
-          return key;
-        }).splice(1);
-        maps.push(keys);
-      }
+    while((defs = re.exec(data)) !== null) {
+      map = defs[1].trim();
+      keys = map.match(/\s*\w+\s*,?/mg);
+      keys = keys.map(function(key) {
+        key = key.replace(/,/,'');
+        key = key.trim();
+        return key;
+      }).splice(0);
+      maps.push(keys);
     }
 
     //Parse action definitions
