@@ -220,12 +220,7 @@ exports.load = function(path, clb) {
     var i, map, keys, maps = [];
     while((defs = re.exec(data)) !== null) {
       map = defs[1].trim();
-      keys = map.match(/\s*\w+\s*,?/mg);
-      keys = keys.map(function(key) {
-        key = key.replace(/,/,'');
-        key = key.trim();
-        return key;
-      }).splice(0);
+      keys = map.split(',').map(function(key) { return key.trim() });
       maps.push(keys);
     }
 
