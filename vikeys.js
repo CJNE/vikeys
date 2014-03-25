@@ -14,7 +14,7 @@ var menuAssign = require('./lib/ui/assignmenu.js');
 var menuActions = require('./lib/ui/actionsmenu.js');
 var pjson = require('./package.json');
 
-process.title = "Vikeys"+pjson.version;
+process.title = "vikeys";
 state.setScreen(screen);
 state.keyboardModel = keyboards.keyboards['ergodox'];
 state.firmware = require('./firmwares/tmk.js');
