@@ -35,11 +35,24 @@ exports.types = {
     min: 0,
     max: 31
   },
+  layer_part: {
+    ui: 'number',
+    min: 0,
+    max: 7
+  },
+  layer_bits: {
+    ui: 'number',
+    min: 0,
+    max: 31
+  },
   fn_id: {
     ui: 'select_fn_id'
   },
   fn_opt: {
     ui: 'select_fn_opt'
+  },
+  macro: {
+    ui: 'text'
   },
   on: {
     ui: 'radio',
@@ -172,15 +185,129 @@ exports.actions = [
       { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
     ],
     help: "Call a custom C function, support for tapping"
+  }, 
+  {
+    group: "Backlight",
+    label: "Increase backlight",
+    help: "Increase backlight level",
+    id: "ACTION_BACKLIGHT_INCREASE",
+    params: []
+  },
+  {
+    group: "Backlight",
+    label: "Decrease backlight",
+    help: "Decrease backlight level",
+    id: "ACTION_BACKLIGHT_DECREASE",
+    params: []
+  },
+  {
+    group: "Backlight",
+    label: "Step backlight",
+    help: "Step through backlight levels",
+    id: "ACTION_BACKLIGHT_STEP",
+    params: []
+  },
+  {
+    group: "Backlight",
+    label: "Toggle backlight",
+    help: "Toggle backlight on and off",
+    id: "ACTION_BACKLIGHT_TOGGLE",
+    params: []
+  },
+  { 
+    group: "Bitwise",
+    label: "Layer bit AND",
+    id: "ACTION_LAYER_BIT_AND",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Perform a bitwise AND operation on the layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Layer bit OR",
+    id: "ACTION_LAYER_BIT_OR",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Perform a bitwise OR operation on the layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Layer bit XOR",
+    id: "ACTION_LAYER_BIT_XOR",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Perform a bitwise exclusive OR operation on the layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Layer bit set",
+    id: "ACTION_LAYER_BIT_SET",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 },
+      { label: "When", default: "ON_PRESS", type: 'on', help: "When to trigger", required: 0 }
+    ],
+    help: "Set bits on the layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Default layer bit AND",
+    id: "ACTION_DEFAULT_LAYER_BIT_AND",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 }
+    ],
+    help: "Perform a bitwise AND operation on the default layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Default layer bit OR",
+    id: "ACTION_DEFAULT_LAYER_BIT_OR",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 }
+    ],
+    help: "Perform a bitwise OR operation on the default layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Default layer bit XOR",
+    id: "ACTION_DEFAULT_LAYER_BIT_XOR",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 }
+    ],
+    help: "Perform a bitwise exclusive OR operation on the default layer state"
+  },
+  { 
+    group: "Bitwise",
+    label: "Default layer bit set",
+    id: "ACTION_DEFAULT_LAYER_BIT_SET",
+    params: [
+      { label: "Part", type: 'layer_part', help: "What part of the layer state to modify", required: 1 },
+      { label: "Bits", type: 'layer_bits', help: "Bit value (5 bit)", required: 1 }
+    ],
+    help: "Set bits on the default layer state"
+  },
+  {
+    group: "Macro",
+    label: "Macro",
+    id: "MACRO",
+    params: [
+      { label: "Macro definition", type: 'macro', help: "Macro commands (examle D(LSHIFT), D(D), END)", required: 1 }
+    ],
+    help: "Perform multiple keystrokes"
   }
-  //TODO: Add bitwise layer actions
-  //TODO: Add macros
 ];
-
-
-
-
-  
     
 
 exports.load = function(path, clb) {
@@ -229,13 +356,13 @@ exports.load = function(path, clb) {
     var actiondef = re.exec(data);
     var actions = [];
     if(actiondef && actiondef.length > 0) {
-      var actiondefs  = actiondef[1].trim().match(/\s*ACTION.*\(.*\),?/mg);
+      var actiondefs  = actiondef[1].trim().match(/\s*(MACRO|ACTION.*)\(.*\),?/mg);
       var action, j;
-      re = /(ACTION_.*)\((.*)\)/i;
+      re = /(MACRO|ACTION_.*)\((.*)\)/i;
       for(i=0; i < actiondefs.length; i++) {
         action = re.exec(actiondefs[i]);
         if(!action) continue;
-        actions.push({ mapping: "FN"+i, fn: action[1], args: action[2].split(',').map(function(d) { return d.trim() }) });
+        actions.push({ mapping: "FN"+i, fn: action[1], args: action[1] == 'MACRO' ? [action[2]] : action[2].split(',').map(function(d) { return d.trim() }) });
       }
     }
     

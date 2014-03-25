@@ -163,10 +163,13 @@ static const uint16_t PROGMEM fn_actions[] = {
     ACTION_LAYER_SET(3, ON_PRESS),                  // FN3 - push Layer3
     ACTION_LAYER_SET(0, ON_PRESS),                  // FN4 - push Layer0
     ACTION_LAYER_MOMENTARY(1),                      // FN5 - switch to Layer1 from layer 1
-    ACTION_MODS_KEY(MOD_LSFT, KC_BSLS),             // FN6  = Shifted BackSlash // " in Workman
+    ACTION_MODS_KEY(MOD_LSFT, KC_BSLS),             // FN6  = Shifted BackSlash // " in WorkmanCRO(D(LSHIFT), D(D), END),
     ACTION_MODS_KEY(MOD_LSFT, KC_LBRC),             // FN7  = Shifted BackSlash // " in Workman
     ACTION_MODS_KEY(MOD_LSFT, KC_RBRC),             // FN8  = Shifted BackSlash // " in Workman
+    MACRO(D(LSHIFT), D(D), END),
+
 };
+
 
 void action_function(keyrecord_t *event, uint8_t id, uint8_t opt)
 {
