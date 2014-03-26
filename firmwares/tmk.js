@@ -109,6 +109,16 @@ exports.actions = [
   },
   {
     group: "Layer",
+    label: "Momentary layer switch tap key",
+    id: 'ACTION_LAYER_TAP_KEY',
+    params: [
+      { label: "Layer", default: "0", type: 'layer', help: "What layer to activate while holding", required: 1 },
+      { label: 'Key', type: 'key', help: "A key", required: 1 }
+    ],
+    help: "Activates layer while holding, send key on tap"
+  },
+  {
+    group: "Layer",
     label: "Toggle layer",
     id: 'ACTION_LAYER_TOGGLE',
     params: [
