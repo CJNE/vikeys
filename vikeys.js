@@ -23,7 +23,7 @@ var ui = blessed.box({
   top: '50%',
   left: '10%',
   right: 0,
-  //width: '90%',
+  width: '90%',
   height: '50%',
   style: {
     fg: 'white',
@@ -214,6 +214,7 @@ function eventListener(msg) {
 screen.append(keyboardBox);
 screen.append(mainMenu);
 screen.append(ui);
+//ui.height = mainMenu.height = ui.height - 2;
 screen.append(state.getStatusBar());
 screen.grabKeys = true;
 state.on('keyboard', keyboard.eventListener);
