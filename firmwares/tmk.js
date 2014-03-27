@@ -83,7 +83,7 @@ exports.actions = [
   {
     group: "Layer",
     label: "Default layer",
-    id: 'ACTION_DEFAULT_LAYER',
+    id: 'ACTION_DEFAULT_LAYER_SET',
     params: [
       { label: "Layer", type: 'layer', default: "0", help: "What layer to set (0-31)", required: 1 }
     ],
