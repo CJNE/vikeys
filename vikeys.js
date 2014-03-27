@@ -217,13 +217,13 @@ screen.append(ui);
 //ui.height = mainMenu.height = ui.height - 2;
 screen.append(state.getStatusBar());
 screen.grabKeys = true;
-state.on('keyboard', keyboard.eventListener);
 
 //state.pushFocus(mainMenu);
 
-keyboard.init(keyboardBox, state.keyboardModel, state);
-state.keyboard = keyboard;
-keyboard.setKeyListener(state.keyListener());
+
+state.keyboard = new keyboard.Keyboard(keyboardBox, state.keyboardModel, state);
+//state.on('keyboard', keyboard.eventListener);
+state.keyboard.on('keypress', state.keyListener());
 screen.on('keypress', state.keyListener());
 state.redraw();
 mainMenu.on('focus', function() {
