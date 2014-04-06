@@ -13,6 +13,7 @@ var state = require('./lib/state')
 var menuAssign = require('./lib/ui/assignmenu.js');
 var menuActions = require('./lib/ui/actionsmenu.js');
 var pjson = require('./package.json');
+var sb = require('./lib/ui/statusbar');
 
 process.title = "vikeys";
 state.setScreen(screen);
@@ -65,6 +66,22 @@ var mainMenu = widgets.listmenu({
     }
   }
 });
+var statusBar = new sb.Statusbar({
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: 1,
+    tags: true,
+    style: {
+      bg: 'lightyellow',
+      fg: 'white',
+      border: {
+        bg: 'lightyellow',
+        fg: 'purple'
+      }
+    }
+  });
 function menuHome() {
   mainMenu.setItems({
     ' Assign': {
@@ -101,7 +118,7 @@ function menuHome() {
     ' Build': {
       help: "Build and upload firmware",
       callback: function() {
-        state.setHelp("Not implemented yet");
+        statusBar.setMessage("Not implemented yet");
       }
     },
     ' Load': {  
@@ -152,7 +169,7 @@ function menuHome() {
             fg: 'white'
           }
         });
-        state.setHelp("Enter file name to write to");
+        statusBar.setMessage("Enter file name to write to");
         state.getStatusBar().bottom = 1;
         screen.append(saveName);
         //saveName.focus();
@@ -170,8 +187,8 @@ function menuHome() {
         saveName.readInput(function(err, path) {
           if(path !== null) {
             state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboardModel, function(err, msg) {
-              if(err) state.setHelp(err);
-              else state.setHelp("Saved to "+path);
+              if(err) statusBar.setMessage(err);
+              else statusBar.setMessage("Saved to "+path);
               screen.remove(saveName);
               state.getStatusBar().bottom = 0;
               state.getStatusBar().height = 1;
@@ -181,7 +198,7 @@ function menuHome() {
             screen.remove(saveName);
             state.getStatusBar().bottom = 0;
             state.getStatusBar().height = 1;
-            state.setHelp("");
+            statusBar.setMessage("");
           }
         });
       }
@@ -201,7 +218,7 @@ function load(file) {
     state.fn_ids = def.fn_ids;
     state.action_fn = def.action_fn;
     mainMenu.focus();
-    state.setHelp("Loaded "+def.maps.length+" layers, "+def.actions.length+" actions");
+    statusBar.setMessage("Loaded "+def.maps.length+" layers, "+def.actions.length+" actions");
     state.redraw();
   });
 }
@@ -215,7 +232,9 @@ screen.append(keyboardBox);
 screen.append(mainMenu);
 screen.append(ui);
 //ui.height = mainMenu.height = ui.height - 2;
-screen.append(state.getStatusBar());
+screen.append(statusBar);
+screen.set('statusbar', statusBar);
+state.on('mode', statusBar.eventListener.bind(statusBar));
 screen.grabKeys = true;
 
 //state.pushFocus(mainMenu);
@@ -227,13 +246,13 @@ state.keyboard.on('keypress', state.keyListener());
 screen.on('keypress', state.keyListener());
 state.redraw();
 mainMenu.on('focus', function() {
-  state.setHelp('');
+  statusBar.setMessage('');
 });
 mainMenu.on('change', function(item, val) {
-  state.setHelp(item.help+ "");
+  statusBar.setMessage(item.help+ "");
 });
 menuHome();
 mainMenu.focus();
 if(process.argv.length > 2) load(process.argv[2]);
-else state.setHelp("Welcome to vikeys! Use arrows or vi keys to navigate");
+else statusBar.setMessage("Welcome to vikeys! Use arrows or vi keys to navigate");
 
