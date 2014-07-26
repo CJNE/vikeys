@@ -169,17 +169,17 @@ function menuHome() {
           state.redraw();
         });
         saveName.readInput(function(err, path) {
+          screen.remove(saveName);
+          screen.removeListener('keypress', state.keyListener());
           if(path !== null) {
             state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboardModel, function(err, msg) {
               if(err) state.setHelp(err);
               else state.setHelp("Saved to "+path);
-              screen.remove(saveName);
               state.getStatusBar().bottom = 0;
               state.getStatusBar().height = 1;
             });
           }
           else {
-            screen.remove(saveName);
             state.getStatusBar().bottom = 0;
             state.getStatusBar().height = 1;
             state.setHelp("");
