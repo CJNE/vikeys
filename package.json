@@ -1,6 +1,6 @@
 {
   "name": "vikeys",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Terminal UI for creating and editing key mappings for keyboard firmwares",
   "homepage": "https://github.com/CJNE/vikeys",
   "repository": {
