@@ -33,7 +33,7 @@ Instead of npm install, clone this repo and `ln -s /path/to/working/copy/vikeys.
 In order to have any use for this tool you need the firmware and the dependencies for compiliing and upload the firmware to you keyboard controller.
 
 For ErgoDox, use the forked repoistory until it has been merged:
-[Get ErgoDox fork](https://github.com/cub-uanic/tmk_keyboard)
+[Get ErgoDox fork](https://github.com/cub-uanic/tmk_keyboard/tree/cub_layout)
 
 Other keyboards will probably want this instead:
 
