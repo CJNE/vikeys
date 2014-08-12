@@ -159,11 +159,12 @@ function menuHome() {
     ' Save': {
       help: "Save the current state",
       callback: function() {
+        var saveAs = state.currentFile === null ? (process.cwd()+(process.platform === 'win32' ? '\\' : '/') ) : state.currentFile;
         var saveName = widgets.filebox({
           bottom: 0,
           width: '100%',
           height: 1,
-          value: process.cwd()+(process.platform === 'win32' ? '\\' : '/'),
+          value: saveAs, 
           style: {
             bg: 'blue',
             fg: 'white'
@@ -185,6 +186,8 @@ function menuHome() {
           state.redraw();
         });
         saveName.readInput(function(err, path) {
+          screen.remove(saveName);
+          screen.removeListener('keypress', state.keyListener());
           if(path !== null) {
             state.firmware.save(path, { fn_ids: state.fn_ids, action_fn: state.action_fn, actions: state.actions, keys: state.keys }, state.keyboardModel, function(err, msg) {
               if(err) statusBar.setMessage(err);
@@ -195,7 +198,6 @@ function menuHome() {
             });
           }
           else {
-            screen.remove(saveName);
             state.getStatusBar().bottom = 0;
             state.getStatusBar().height = 1;
             statusBar.setMessage("");
@@ -213,6 +215,7 @@ function menuHome() {
 }
 function load(file) {
   state.firmware.load(file, function(error, def) {
+    state.currentFile = file;
     state.keyboard.addMappings(def.maps);
     state.actions = def.actions;
     state.fn_ids = def.fn_ids;
