@@ -156,12 +156,12 @@ exports.actions = [
     ],
     help: "Inverts state of layer. If the layer is on it will be turned off."
   },
-  { 
+  {
     group: "Mod keys",
     label: "Modified key",
     id: "ACTION_MODS_KEY",
     params: [
-      { label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1, multiple: true}, 
+      { label: 'Modifier(s)', type: "modifier", help: "A modifier key, shift for example" , required: 1, multiple: true},
       { label: 'Key', type: 'key', help: "A key", required: 1 }
     ],
     help: "Combines one or more modifier keys with another key, Shift-1 to get ! for example"
@@ -171,12 +171,12 @@ exports.actions = [
     label: "Modifier tap key",
     id: "ACTION_MODS_TAP_KEY",
     params: [
-      { label: 'Modifier', type: "modifier", default: "LSFT", help: "A modifier key, shift for example", required: 1}, 
+      { label: 'Modifier', type: "modifier", default: "LSFT", help: "A modifier key, shift for example", required: 1},
       { label: 'Key', type: 'key', help: "A key", required: 1 }
     ],
     help: "Acts as the modifier while held down, send key on tap"
   },
-  { 
+  {
     group: "Custom",
     label: "Call function",
     id: "ACTION_FUNCTION",
@@ -195,7 +195,7 @@ exports.actions = [
       { label: "Option", type: 'fn_opt', help: "Option to pass", required: 0 }
     ],
     help: "Call a custom C function, support for tapping"
-  }, 
+  },
   {
     group: "Backlight",
     label: "Increase backlight",
@@ -224,7 +224,7 @@ exports.actions = [
     id: "ACTION_BACKLIGHT_TOGGLE",
     params: []
   },
-  { 
+  {
     group: "Bitwise",
     label: "Layer bit AND",
     id: "ACTION_LAYER_BIT_AND",
@@ -235,7 +235,7 @@ exports.actions = [
     ],
     help: "Perform a bitwise AND operation on the layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Layer bit OR",
     id: "ACTION_LAYER_BIT_OR",
@@ -246,7 +246,7 @@ exports.actions = [
     ],
     help: "Perform a bitwise OR operation on the layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Layer bit XOR",
     id: "ACTION_LAYER_BIT_XOR",
@@ -257,7 +257,7 @@ exports.actions = [
     ],
     help: "Perform a bitwise exclusive OR operation on the layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Layer bit set",
     id: "ACTION_LAYER_BIT_SET",
@@ -268,7 +268,7 @@ exports.actions = [
     ],
     help: "Set bits on the layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Default layer bit AND",
     id: "ACTION_DEFAULT_LAYER_BIT_AND",
@@ -278,7 +278,7 @@ exports.actions = [
     ],
     help: "Perform a bitwise AND operation on the default layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Default layer bit OR",
     id: "ACTION_DEFAULT_LAYER_BIT_OR",
@@ -288,7 +288,7 @@ exports.actions = [
     ],
     help: "Perform a bitwise OR operation on the default layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Default layer bit XOR",
     id: "ACTION_DEFAULT_LAYER_BIT_XOR",
@@ -298,7 +298,7 @@ exports.actions = [
     ],
     help: "Perform a bitwise exclusive OR operation on the default layer state"
   },
-  { 
+  {
     group: "Bitwise",
     label: "Default layer bit set",
     id: "ACTION_DEFAULT_LAYER_BIT_SET",
@@ -318,7 +318,6 @@ exports.actions = [
     help: "Perform multiple keystrokes"
   }
 ];
-    
 
 exports.load = function(path, clb) {
   fs.readFile(path, function (err, data) {
@@ -375,7 +374,7 @@ exports.load = function(path, clb) {
         actions.push({ mapping: "FN"+i, fn: action[1], args: action[1] == 'MACRO' ? [action[2]] : action[2].split(',').map(function(d) { return d.trim() }) });
       }
     }
-    
+
     //Parse function_id
     re = /function_id\s*\{([^]+?)\};$/mgi;
     var ids = [];
@@ -384,21 +383,24 @@ exports.load = function(path, clb) {
 
 
     clb(null, { action_fn: actionFunction, fn_ids: ids, maps: maps, actions: actions});
-  }); 
+  });
 };
+
 exports.save = function(path, data, keyboard, clb) {
   var str = "static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {\n";
-  var layer, keysDef, i, mapping, layers = [];
+  var layer, keysDef, paddedStr, i, mapping, layers = [];
   var allEmpty;
   //Write keymaps
   for(layer = 0; layer < MAX_LAYERS; layer++) {
     allEmpty = true;
-    keysDef = "  KEYMAP( // Layer "+layer+"\n";
+    keysDef = "\n  KEYMAP( // Layer "+layer+"\n";
+    keysDef += "  // Left hand\n  ";
     for(i = 0; i < keyboard.keys; i++) {
       mapping = data.keys[i].getMapping(layer);
       if(typeof(mapping) === 'undefined') mapping = "TRNS";
       else allEmpty = false;
-      keysDef += (i == 0 ? "    ":", ")+mapping;
+
+      keysDef += formattedKeyMapping(i, mapping);
     }
     keysDef += ")";
     if(!allEmpty) {
@@ -406,11 +408,11 @@ exports.save = function(path, data, keyboard, clb) {
     }
   }
   str += layers.join(",\n");
-  str += "\n};";
+  str += "\n};\n";
 
   //Write actions
-  if(data.fn_ids.length > 0) 
-    str += "\nenum function_id {\n  " + data.fn_ids.join(",  \n") + "\n};\n";
+  if(data.fn_ids.length > 0)
+    str += "\nenum function_id {\n  " + data.fn_ids.join(",\n") + "};\n";
 
   var action;
   str += "\n\nstatic const uint16_t PROGMEM fn_actions[] = {\n";
@@ -418,7 +420,7 @@ exports.save = function(path, data, keyboard, clb) {
     action = data.actions[i];
     str += "  " + action.fn + "(" + action.args.join(", ") + "),\n";
   }
-  str += "};\n";
+  str += "};";
 
   if(data.action_fn) str += data.action_fn;
 
@@ -428,3 +430,41 @@ exports.save = function(path, data, keyboard, clb) {
   });
 
 };
+
+function formattedKeyMapping(index, mapping) {
+  var ret = "";
+
+  if(index === 32) {
+    ret += "                                    ";
+  } else if(index === 34) {
+    ret += "                                          ";
+  } else if(index === 35) {
+    ret += "                              ";
+  } else if(index === 52) {
+    ret += "            ";
+  } else if(index === 65) {
+    ret += "                  ";
+  } else if([38, 45, 58].indexOf(index) > -1) {
+    ret += "      ";
+  }
+
+  if(mapping.length < 5) {
+    ret += String("     " + mapping).slice(-5);
+  } else {
+    ret += mapping;
+  }
+
+  if(index < 75) ret += ",";
+
+  if([6, 13, 19, 26, 31, 33, 34, 44, 51, 57, 64, 69, 71, 72].indexOf(index) > -1) {
+    ret += "\n";
+    ret += "  ";
+  }
+  if(index === 37) {
+    ret += "\n\n";
+    ret += "  // Right hand";
+    ret += "\n";
+    ret += "  ";
+  }
+  return ret;
+}
