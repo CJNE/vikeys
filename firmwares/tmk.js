@@ -365,7 +365,7 @@ exports.load = function(path, clb) {
     var actiondef = re.exec(data);
     var actions = [];
     if(actiondef && actiondef.length > 0) {
-      var actiondefs  = actiondef[1].trim().match(/\s*(MACRO|ACTION.*)\(.*\),?/mg);
+      var actiondefs  = actiondef[1].trim().match(/\s*(MACRO|ACTION.*)\(.*\),?/mg) || [];
       var action, j;
       re = /(MACRO|ACTION_.*)\((.*)\)/i;
       for(i=0; i < actiondefs.length; i++) {
